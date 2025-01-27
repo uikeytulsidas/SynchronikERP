@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Student</title>
+    <script>
+      function updateSemesters() {
+        var year = document.getElementById('id_admission_year').value;
+        var semesterField = document.getElementById('id_semester');
+        var options = semesterField.options;
+        for (var i = options.length - 1; i >= 0; i--) {
+          options[i].style.display = 'none';
+        }
+        if (year == '1') {
+          options[0].style.display = 'block';
+          options[1].style.display = 'block';
+        } else if (year == '2') {
+          options[2].style.display = 'block';
+          options[3].style.display = 'block';
+        } else if (year == '3') {
+          options[4].style.display = 'block';
+          options[5].style.display = 'block';
+        } else if (year == '4') {
+          options[6].style.display = 'block';
+          options[7].style.display = 'block';
+        }
+      }
+
+      function updateInstitutes() {
+        var universityId = document.getElementById('id_university').value;
+        if (!universityId) {
+          return;
+        }
+        var instituteField = document.getElementById('id_institute');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "load_institutes" %}?university_id=' + universityId, true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            instituteField.innerHTML = '<option value="">Select Institute</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              instituteField.appendChild(opt);
+            });
+            updatePrograms();  // Update programs after institutes are loaded
+          }
+        };
+        xhr.send();
+      }
+
+      function updatePrograms() {
+        var instituteId = document.getElementById('id_institute').value;
+        if (!instituteId) {
+          return;
+        }
+        var programField = document.getElementById('id_program');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "load_programs" %}?institute_id=' + instituteId, true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            programField.innerHTML = '<option value="">Select Program</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              programField.appendChild(opt);
+            });
+            updateDepartments();  // Update departments after programs are loaded
+          }
+        };
+        xhr.send();
+      }
+
+      function updateDepartments() {
+        var programId = document.getElementById('id_program').value;
+        if (!programId) {
+          return;
+        }
+        var departmentField = document.getElementById('id_department');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "load_departments" %}?program_id=' + programId, true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            departmentField.innerHTML = '<option value="">Select Department</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              departmentField.appendChild(opt);
+            });
+            updateBranches();  // Update branches after departments are loaded
+          }
+        };
+        xhr.send();
+      }
+
+      function updateBranches() {
+        var departmentId = document.getElementById('id_department').value;
+        if (!departmentId) {
+          return;
+        }
+        var branchField = document.getElementById('id_branch');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "load_branches" %}?department_id=' + departmentId, true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            branchField.innerHTML = '<option value="">Select Branch</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              branchField.appendChild(opt);
+            });
+          }
+        };
+        xhr.send();
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Register Student</h1>
+    {% if messages %}
+    <div>
+      {% for message in messages %}
+      <div class="{% if message.tags %}{{ message.tags }}-message{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div>
+        <label for="id_email">Email:</label>
+        {{ form.email }}
+      </div>
+      <div>
+        <label for="id_mobile_number">Mobile Number:</label>
+        {{ form.mobile_number }}
+      </div>
+      <div>
+        <label for="id_aadhar_card_number">Aadhar Card Number:</label>
+        {{ form.aadhar_card_number }}
+      </div>
+      <div>
+        <label for="id_student_id">Student ID:</label>
+        {{ form.student_id }}
+      </div>
+      <div>
+        <label for="id_university">University:</label>
+        {{ form.university }}
+      </div>
+      <div>
+        <label for="id_institute">Institute:</label>
+        <select id="id_institute" name="institute">
+          <option value="">Select Institute</option>
+          {% for institute in form.fields.institute.queryset %}
+            <option value="{{ institute.id }}" data-university="{{ institute.university_id }}">{{ institute.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="id_program">Program:</label>
+        <select id="id_program" name="program">
+          <option value="">Select Program</option>
+          {% for program in form.fields.program.queryset %}
+            <option value="{{ program.id }}" data-institute="{{ program.institute_id }}">{{ program.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="id_department">Department:</label>
+        <select id="id_department" name="department">
+          <option value="">Select Department</option>
+          {% for department in form.fields.department.queryset %}
+            <option value="{{ department.id }}" data-program="{{ department.program_id }}">{{ department.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="id_branch">Branch:</label>
+        <select id="id_branch" name="branch">
+          <option value="">Select Branch</option>
+          {% for branch in form.fields.branch.queryset %}
+            <option value="{{ branch.id }}" data-department="{{ branch.department_id }}">{{ branch.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="id_admission_year">Admission Year:</label>
+        {{ form.admission_year }}
+      </div>
+      <div>
+        <label for="id_semester">Semester:</label>
+        {{ form.semester }}
+      </div>
+      <button type="submit">Complete Registration</button>
+    </form>
+    <script>
+      document.getElementById('id_admission_year').addEventListener('change', updateSemesters);
+      document.getElementById('id_university').addEventListener('change', function() {
+        updateInstitutes();
+      });
+      document.getElementById('id_institute').addEventListener('change', function() {
+        updatePrograms();
+      });
+      document.getElementById('id_program').addEventListener('change', function() {
+        updateDepartments();
+      });
+      document.getElementById('id_department').addEventListener('change', updateBranches);
+      updateSemesters();  // Initial call to set the correct state on page load
+      updateInstitutes();  // Initial call to set the correct state on page load
+      updatePrograms();  // Initial call to set the correct state on page load
+      updateDepartments();  // Initial call to set the correct state on page load
+      updateBranches();  // Initial call to set the correct state on page load
+    </script>
+  </body>
+</html>

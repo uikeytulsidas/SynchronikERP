@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Dashboard</title>
+    <style>
+      .container {
+        width: 90%;
+        margin: 0 auto;
+      }
+      .profile-section,
+      .students-section {
+        margin: 20px 0;
+        padding: 20px;
+        border: 1px solid #ddd;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+      h2 {
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Employee Profile Section -->
+      <div class="profile-section">
+        <h2>Employee Profile</h2>
+        <div style="float: right">
+          <span>{{ user.username }}</span>
+          <a href="{% url 'logout' %}">Logout</a>
+        </div>
+        {% if user_data %}
+        <table>
+          <tr>
+            <th>Name</th>
+            <td>{{ user_data.1 }}</td>
+            <th>Employee ID</th>
+            <td>{{ user_data.0 }}</td>
+          </tr>
+          <tr>
+            <th>Date of Birth</th>
+            <td>{{ user_data.2 }}</td>
+            <th>Gender</th>
+            <td>{{ user_data.3 }}</td>
+          </tr>
+          <tr>
+            <th>Hire Date</th>
+            <td>{{ user_data.4 }}</td>
+            <th>Department</th>
+            <td>{{ user_data.15 }}</td>
+          </tr>
+          <tr>
+            <th>Phone</th>
+            <td>{{ user_data.5 }}</td>
+            <th>Email</th>
+            <td>{{ user_data.6 }}</td>
+          </tr>
+          <tr>
+            <th>Address</th>
+            <td colspan="3">{{ user_data.7 }}</td>
+          </tr>
+        </table>
+        {% else %}
+        <p>No employee data available</p>
+        {% endif %}
+      </div>
+
+      <!-- Students Section -->
+      <div class="students-section">
+        <h2>Student List</h2>
+        {% if students %}
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Date of Birth</th>
+              <th>Gender</th>
+              <th>Admission Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for student in students %}
+            <tr>
+              <td>{{ student.0 }}</td>
+              <td>{{ student.1 }}</td>
+              <td>{{ student.3 }}</td>
+              <td>{{ student.2 }}</td>
+              <td>{{ student.4 }}</td>
+              <td>{{ student.5 }}</td>
+              <td>{{ student.6 }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p>No students available</p>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,398 @@
+{% load form_tags %}  <!-- Load the custom template filter -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employee Information Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        padding: 0;
+      }
+      h1 {
+        color: #333;
+      }
+      fieldset {
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      legend {
+        font-weight: bold;
+        color: #555;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input,
+      select,
+      textarea {
+        width: 100%;
+        padding: 5px;
+        margin-top: 5px;
+      }
+      button {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      .error-messages {
+        color: red;
+        margin-bottom: 10px;
+      }
+      .success-message {
+        color: green;
+        margin-bottom: 10px;
+      }
+    </style>
+    <script>
+      function updateInstitutes() {
+        var universityId = document.getElementById('id_university').value;
+        if (!universityId) {
+          return;
+        }
+        var instituteField = document.getElementById('id_institute');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "load_institutes" %}?university_id=' + universityId, true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            instituteField.innerHTML = '<option value="">Select Institute</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              instituteField.appendChild(opt);
+            });
+            updatePrograms();  // Update programs after institutes are loaded
+          }
+        };
+        xhr.send();
+      }
+
+      function updatePrograms() {
+        var instituteId = document.getElementById('id_institute').value;
+        if (!instituteId) {
+          return;
+        }
+        var programField = document.getElementById('id_program');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "load_programs" %}?institute_id=' + instituteId, true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            programField.innerHTML = '<option value="">Select Program</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              programField.appendChild(opt);
+            });
+            updateDepartments();  // Update departments after programs are loaded
+          }
+        };
+        xhr.send();
+      }
+
+      function updateDepartments() {
+        var programId = document.getElementById('id_program').value;
+        if (!programId) {
+          return;
+        }
+        var departmentField = document.getElementById('id_department');
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "load_departments" %}?program_id=' + programId, true);
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            departmentField.innerHTML = '<option value="">Select Department</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              departmentField.appendChild(opt);
+            });
+          }
+        };
+        xhr.send();
+      }
+
+      function toggleRoleSpecificFields() {
+        var employeeType = document.getElementById('id_employee_type').value;
+        var roleFields = document.querySelectorAll('.role-specific');
+        roleFields.forEach(function (field) {
+          field.style.display = 'none';
+        });
+
+        if (employeeType === 'teacher') {
+          document.getElementById('teacher-fields').style.display = 'block';
+        } else if (employeeType === 'hod') {
+          document.getElementById('hod-fields').style.display = 'block';
+        } else if (employeeType === 'scholarship_officer') {
+          document.getElementById('scholarship-officer-fields').style.display = 'block';
+        } else if (employeeType === 'fee_collector') {
+          document.getElementById('fee-collector-fields').style.display = 'block';
+        } else if (employeeType === 'admin') {
+          document.getElementById('admin-fields').style.display = 'block';
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Employee Information Form</h1>
+
+    <!-- Display Success or Error Messages -->
+    {% if messages %}
+    <div>
+      {% for message in messages %}
+      <div class="{% if message.tags %}{{ message.tags }}-message{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Employee Information Form -->
+    <form action="{% url 'employee_info_form' %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <!-- Personal Information -->
+      <fieldset>
+        <legend>Personal Information</legend>
+        {% if form.full_name %}
+        <label for="full_name">Full Name:</label>
+        {{ form.full_name.errors }}
+        {{ form.full_name }}
+        {% endif %}
+
+        {% if form.date_of_birth %}
+        <label for="date_of_birth">Date of Birth:</label>
+        {{ form.date_of_birth.errors }}
+        {{ form.date_of_birth|add_attrs:"placeholder:YYYY-MM-DD" }}
+        {% endif %}
+
+        {% if form.gender %}
+        <label for="gender">Gender:</label>
+        {{ form.gender.errors }}
+        {{ form.gender }}
+        {% endif %}
+
+        {% if form.contact_number %}
+        <label for="contact_number">Contact Number:</label>
+        {{ form.contact_number.errors }}
+        {{ form.contact_number }}
+        {% endif %}
+
+        {% if form.email_address %}
+        <label for="email_address">Email Address:</label>
+        {{ form.email_address.errors }}
+        {{ form.email_address }}
+        {% endif %}
+
+        {% if form.address %}
+        <label for="address">Address:</label>
+        {{ form.address.errors }}
+        {{ form.address }}
+        {% endif %}
+
+        {% if form.emergency_contact_name %}
+        <label for="emergency_contact_name">Emergency Contact Name:</label>
+        {{ form.emergency_contact_name.errors }}
+        {{ form.emergency_contact_name }}
+        {% endif %}
+
+        {% if form.emergency_contact_relationship %}
+        <label for="emergency_contact_relationship">Emergency Contact Relationship:</label>
+        {{ form.emergency_contact_relationship.errors }}
+        {{ form.emergency_contact_relationship }}
+        {% endif %}
+
+        {% if form.emergency_contact_number %}
+        <label for="emergency_contact_number">Emergency Contact Number:</label>
+        {{ form.emergency_contact_number.errors }}
+        {{ form.emergency_contact_number }}
+        {% endif %}
+      </fieldset>
+
+      <!-- Employment Details -->
+      <fieldset>
+        <legend>Employment Details</legend>
+        {% if form.employee_id %}
+        <label for="employee_id">Employee ID:</label>
+        {{ form.employee_id.errors }}
+        {{ form.employee_id }}
+        {% endif %}
+
+        {% if form.joining_date %}
+        <label for="joining_date">Joining Date:</label>
+        {{ form.joining_date.errors }}
+        {{ form.joining_date|add_attrs:"placeholder:YYYY-MM-DD" }}
+        {% endif %}
+
+        {% if form.hire_date %}
+        <label for="hire_date">Hire Date:</label>
+        {{ form.hire_date.errors }}
+        {{ form.hire_date|add_attrs:"placeholder:YYYY-MM-DD" }}
+        {% endif %}
+
+        {% if form.university %}
+        <label for="university">University:</label>
+        {{ form.university.errors }}
+        {{ form.university }}
+        {% endif %}
+
+        {% if form.institute %}
+        <label for="institute">Institute:</label>
+        {{ form.institute.errors }}
+        {{ form.institute }}
+        {% endif %}
+
+        {% if form.department %}
+        <label for="department">Department:</label>
+        {{ form.department.errors }}
+        {{ form.department }}
+        {% endif %}
+      </fieldset>
+
+      <!-- Role-Specific Fields -->
+      <fieldset id="teacher-fields" class="role-specific" style="display: none;">
+        <legend>Teacher Information</legend>
+        {% if form.subjects_taught %}
+        <label for="subjects_taught">Subjects Taught:</label>
+        {{ form.subjects_taught.errors }}
+        {{ form.subjects_taught }}
+        {% endif %}
+
+        {% if form.classes_grades_assigned %}
+        <label for="classes_grades_assigned">Classes/Grades Assigned:</label>
+        {{ form.classes_grades_assigned.errors }}
+        {{ form.classes_grades_assigned }}
+        {% endif %}
+
+        {% if form.qualifications %}
+        <label for="qualifications">Qualifications (e.g., B.Ed, M.Sc):</label>
+        {{ form.qualifications.errors }}
+        {{ form.qualifications }}
+        {% endif %}
+
+        {% if form.teaching_experience %}
+        <label for="teaching_experience">Teaching Experience (Years):</label>
+        {{ form.teaching_experience.errors }}
+        {{ form.teaching_experience }}
+        {% endif %}
+
+        {% if form.special_skills_certifications %}
+        <label for="special_skills_certifications">Special Skills/Certifications (e.g., Sports, Art):</label>
+        {{ form.special_skills_certifications.errors }}
+        {{ form.special_skills_certifications }}
+        {% endif %}
+      </fieldset>
+
+      <fieldset id="hod-fields" class="role-specific" style="display: none;">
+        <legend>HOD Information</legend>
+        {% if form.department_name %}
+        <label for="department_name">Department Name:</label>
+        {{ form.department_name.errors }}
+        {{ form.department_name }}
+        {% endif %}
+
+        {% if form.years_of_experience_in_institution %}
+        <label for="years_of_experience_in_institution">Years of Experience in the Institution:</label>
+        {{ form.years_of_experience_in_institution.errors }}
+        {{ form.years_of_experience_in_institution }}
+        {% endif %}
+
+        {% if form.staff_supervised %}
+        <label for="staff_supervised">Staff Supervised (Count):</label>
+        {{ form.staff_supervised.errors }}
+        {{ form.staff_supervised }}
+        {% endif %}
+
+        {% if form.key_responsibilities %}
+        <label for="key_responsibilities">Key Responsibilities (Optional):</label>
+        {{ form.key_responsibilities.errors }}
+        {{ form.key_responsibilities }}
+        {% endif %}
+      </fieldset>
+
+      <fieldset id="scholarship-officer-fields" class="role-specific" style="display: none;">
+        <legend>Scholarship Officer Information</legend>
+        {% if form.scholarship_programs_managed %}
+        <label for="scholarship_programs_managed">Scholarship Programs Managed:</label>
+        {{ form.scholarship_programs_managed.errors }}
+        {{ form.scholarship_programs_managed }}
+        {% endif %}
+
+        {% if form.approval_authority %}
+        <label for="approval_authority">Approval Authority:</label>
+        {{ form.approval_authority.errors }}
+        {{ form.approval_authority }}
+        {% endif %}
+
+        {% if form.coordinating_departments %}
+        <label for="coordinating_departments">Coordinating Departments (Optional):</label>
+        {{ form.coordinating_departments.errors }}
+        {{ form.coordinating_departments }}
+        {% endif %}
+      </fieldset>
+
+      <fieldset id="fee-collector-fields" class="role-specific" style="display: none;">
+        <legend>Fee Collector/Finance Staff Information</legend>
+        {% if form.assigned_counters %}
+        <label for="assigned_counters">Assigned Counters (e.g., Admission, Library, Lab):</label>
+        {{ form.assigned_counters.errors }}
+        {{ form.assigned_counters }}
+        {% endif %}
+
+        {% if form.handled_payment_modes %}
+        <label for="handled_payment_modes">Handled Payment Modes (Cash, Card, Online):</label>
+        {{ form.handled_payment_modes.errors }}
+        {{ form.handled_payment_modes }}
+        {% endif %}
+
+        {% if form.software_tools_used %}
+        <label for="software_tools_used">Software/Tools Used (If applicable):</label>
+        {{ form.software_tools_used.errors }}
+        {{ form.software_tools_used }}
+        {% endif %}
+      </fieldset>
+
+      <fieldset id="admin-fields" class="role-specific" style="display: none;">
+        <legend>Administrative Staff Information</legend>
+        {% if form.assigned_responsibilities %}
+        <label for="assigned_responsibilities">Assigned Responsibilities (e.g., Office Management, HR):</label>
+        {{ form.assigned_responsibilities.errors }}
+        {{ form.assigned_responsibilities }}
+        {% endif %}
+
+        {% if form.work_schedule_shift_details %}
+        <label for="work_schedule_shift_details">Work Schedule/Shift Details:</label>
+        {{ form.work_schedule_shift_details.errors }}
+        {{ form.work_schedule_shift_details }}
+        {% endif %}
+      </fieldset>
+
+      <!-- Submit Button -->
+      <button type="submit">Submit</button>
+    </form>
+    <script>
+      document.getElementById('id_university').addEventListener('change', updateInstitutes);
+      document.getElementById('id_institute').addEventListener('change', updatePrograms);
+      document.getElementById('id_program').addEventListener('change', updateDepartments);
+      updateInstitutes();  // Initial call to set the correct state on page load
+      toggleRoleSpecificFields();  // Initial call to set the correct state on page load
+      document.getElementById('id_employee_type').addEventListener('change', toggleRoleSpecificFields);
+    </script>
+  </body>
+</html>

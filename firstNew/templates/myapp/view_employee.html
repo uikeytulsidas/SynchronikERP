@@ -1,0 +1,79 @@
+{% include 'myapp/header.html' %}
+
+<h1>Employee Details</h1>
+{% if employee_data %}
+<table border="1">
+  <tr>
+    <th>Username</th>
+    <td>{{ employee_data.1 }}</td>
+  </tr>
+  <tr>
+    <th>Email</th>
+    <td>{{ employee_data.2 }}</td>
+  </tr>
+  <tr>
+    <th>Name</th>
+    <td>{{ employee_data.3|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Date of Birth</th>
+    <td>{{ employee_data.4|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Gender</th>
+    <td>{{ employee_data.5|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Hire Date</th>
+    <td>{{ employee_data.6|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Phone Number</th>
+    <td>{{ employee_data.7|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Contact Email</th>
+    <td>{{ employee_data.8|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Address</th>
+    <td>{{ employee_data.9|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Highest Degree</th>
+    <td>{{ employee_data.10|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Institution</th>
+    <td>{{ employee_data.11|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Year of Passing</th>
+    <td>{{ employee_data.12|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Bank Account</th>
+    <td>{{ employee_data.13|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>IFSC Code</th>
+    <td>{{ employee_data.14|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Bank Name</th>
+    <td>{{ employee_data.15|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Subject</th>
+    <td>{{ employee_data.16|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Department</th>
+    <td>{{ employee_data.17|default:"N/A" }}</td>
+  </tr>
+</table>
+{% else %}
+<p>No employee information found.</p>
+{% endif %}
+
+{% include 'myapp/footer.html' %}

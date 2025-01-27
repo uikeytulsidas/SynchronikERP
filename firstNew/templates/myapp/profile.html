@@ -1,0 +1,124 @@
+{% include 'myapp/header.html' %}
+
+<h1>Your Profile</h1>
+
+{% if user_data %}
+<table border="1">
+  <tr>
+    <th>Username</th>
+    <td>{{ user_data.1 }}</td>
+    <td><button onclick="editField('username', '{{ user_data.1 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Email</th>
+    <td>{{ user_data.2 }}</td>
+    <td><button onclick="editField('email', '{{ user_data.2 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Name</th>
+    <td>{{ user_data.3|default:"N/A" }}</td>
+    <td><button onclick="editField('name', '{{ user_data.3 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Date of Birth</th>
+    <td>{{ user_data.4|default:"N/A" }}</td>
+    <td><button onclick="editField('date_of_birth', '{{ user_data.4 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Gender</th>
+    <td>{{ user_data.5|default:"N/A" }}</td>
+    <td><button onclick="editField('gender', '{{ user_data.5 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Admission Date</th>
+    <td>{{ user_data.6|default:"N/A" }}</td>
+    <td><button onclick="editField('admission_date', '{{ user_data.6 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Phone Number</th>
+    <td>{{ user_data.7|default:"N/A" }}</td>
+    <td><button onclick="editField('phone_number', '{{ user_data.7 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Contact Email</th>
+    <td>{{ user_data.8|default:"N/A" }}</td>
+    <td><button onclick="editField('contact_email', '{{ user_data.8 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Address</th>
+    <td>{{ user_data.9|default:"N/A" }}</td>
+    <td><button onclick="editField('address', '{{ user_data.9 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Class 10 Score</th>
+    <td>{{ user_data.10|default:"N/A" }}</td>
+    <td><button onclick="editField('class_10_score', '{{ user_data.10 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Class 12 Score</th>
+    <td>{{ user_data.11|default:"N/A" }}</td>
+    <td><button onclick="editField('class_12_score', '{{ user_data.11 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Graduation Score</th>
+    <td>{{ user_data.12|default:"N/A" }}</td>
+    <td><button onclick="editField('graduation_score', '{{ user_data.12 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Bank Account</th>
+    <td>{{ user_data.13|default:"N/A" }}</td>
+    <td><button onclick="editField('bank_account', '{{ user_data.13 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>IFSC Code</th>
+    <td>{{ user_data.14|default:"N/A" }}</td>
+    <td><button onclick="editField('ifsc_code', '{{ user_data.14 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Bank Name</th>
+    <td>{{ user_data.15|default:"N/A" }}</td>
+    <td><button onclick="editField('bank_name', '{{ user_data.15 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Parent Name</th>
+    <td>{{ user_data.16|default:"N/A" }}</td>
+    <td><button onclick="editField('parent_name', '{{ user_data.16 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Relationship</th>
+    <td>{{ user_data.17|default:"N/A" }}</td>
+    <td><button onclick="editField('relationship', '{{ user_data.17 }}')">Edit</button></td>
+  </tr>
+  <tr>
+    <th>Contact Number</th>
+    <td>{{ user_data.18|default:"N/A" }}</td>
+    <td><button onclick="editField('contact_number', '{{ user_data.18 }}')">Edit</button></td>
+  </tr>
+  {% if user.is_staff %}
+  <tr>
+    <th>User Type</th>
+    <td>{{ user.user_type }}</td>
+    <td><button onclick="editField('user_type', '{{ user.user_type }}')">Edit</button></td>
+  </tr>
+  {% endif %}
+</table>
+{% else %}
+<p>No profile information found.</p>
+{% endif %}
+
+<form id="edit-form" method="post" style="display: none;">
+  {% csrf_token %}
+  <input type="hidden" name="field" id="field">
+  <input type="text" name="value" id="value">
+  <button type="submit">Save</button>
+</form>
+
+<script>
+function editField(field, value) {
+  document.getElementById('field').value = field;
+  document.getElementById('value').value = value;
+  document.getElementById('edit-form').style.display = 'block';
+}
+</script>
+
+{% include 'myapp/footer.html' %}

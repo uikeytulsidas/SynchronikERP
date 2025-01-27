@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Information Form</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css"
+    />
+  </head>
+  <body>
+    <div class="container mt-5">
+      <h2 class="text-center">Complete Your Registration</h2>
+      <hr />
+      <form method="POST" class="needs-validation" novalidate>
+        {% csrf_token %}
+        <!-- Personal Information Section -->
+        <div class="card mb-4">
+          <div class="card-header bg-primary text-white">
+            Personal Information
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="name" class="form-label">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="date_of_birth" class="form-label"
+                >Date of Birth</label
+              >
+              <input
+                type="date"
+                id="date_of_birth"
+                name="date_of_birth"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="gender" class="form-label">Gender</label>
+              <select id="gender" name="gender" class="form-select" required>
+                <option value="" disabled selected>Select your gender</option>
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+                <option value="O">Other</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="admission_date" class="form-label"
+                >Admission Date</label
+              >
+              <input
+                type="date"
+                id="admission_date"
+                name="admission_date"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Contact Information Section -->
+        <div class="card mb-4">
+          <div class="card-header bg-secondary text-white">
+            Contact Information
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="contact_phone_number" class="form-label"
+                >Phone Number</label
+              >
+              <input
+                type="text"
+                id="contact_phone_number"
+                name="contact_phone_number"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="contact_email" class="form-label">Email</label>
+              <input
+                type="email"
+                id="contact_email"
+                name="contact_email"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="contact_address" class="form-label">Address</label>
+              <textarea
+                id="contact_address"
+                name="contact_address"
+                class="form-control"
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Academic Information Section -->
+        <div class="card mb-4">
+          <div class="card-header bg-success text-white">
+            Academic Information
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="class_10_score" class="form-label"
+                >Class 10 Score (%)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="class_10_score"
+                name="class_10_score"
+                class="form-control"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="class_12_score" class="form-label"
+                >Class 12 Score (%)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="class_12_score"
+                name="class_12_score"
+                class="form-control"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="graduation_score" class="form-label"
+                >Graduation Score (%)</label
+              >
+              <input
+                type="number"
+                step="0.01"
+                id="graduation_score"
+                name="graduation_score"
+                class="form-control"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Banking Information Section -->
+        <div class="card mb-4">
+          <div class="card-header bg-warning text-dark">
+            Banking Information
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="bank_account" class="form-label"
+                >Bank Account Number</label
+              >
+              <input
+                type="text"
+                id="bank_account"
+                name="bank_account"
+                class="form-control"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="ifsc_code" class="form-label">IFSC Code</label>
+              <input
+                type="text"
+                id="ifsc_code"
+                name="ifsc_code"
+                class="form-control"
+              />
+            </div>
+            <div class="mb-3">
+              <label for="bank_name" class="form-label">Bank Name</label>
+              <input
+                type="text"
+                id="bank_name"
+                name="bank_name"
+                class="form-control"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Parent Information Section -->
+        <div class="card mb-4">
+          <div class="card-header bg-info text-white">Parent Information</div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="parent_name" class="form-label">Parent Name</label>
+              <input
+                type="text"
+                id="parent_name"
+                name="parent_name"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="parent_relationship" class="form-label"
+                >Relationship</label
+              >
+              <input
+                type="text"
+                id="parent_relationship"
+                name="parent_relationship"
+                class="form-control"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="parent_contact_number" class="form-label"
+                >Contact Number</label
+              >
+              <input
+                type="text"
+                id="parent_contact_number"
+                name="parent_contact_number"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.min.js"></script>
+  </body>
+</html>

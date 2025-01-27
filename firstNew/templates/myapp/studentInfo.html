@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Information Form</title>
+    {% load static %}
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'Information/css/style.css' %}"
+    />
+  </head>
+  <body>
+    <div class="form-container">
+      <h1>Student Information Form</h1>
+      <form
+        id="studentForm"
+        action="/submit"
+        method="POST"
+        onsubmit="return validateForm();"
+      >
+        <!-- Master Student Information -->
+        <fieldset>
+          <legend>Student Details</legend>
+          <label for="name">Full Name:</label>
+          <input type="text" id="name" name="name" required />
+
+          <label for="dob">Date of Birth:</label>
+          <input type="date" id="dob" name="date_of_birth" required />
+
+          <label for="gender">Gender:</label>
+          <select id="gender" name="gender" required>
+            <option value="">Select</option>
+            <option value="M">Male</option>
+            <option value="F">Female</option>
+            <option value="O">Other</option>
+          </select>
+
+          <label for="admission_date">Admission Date:</label>
+          <input
+            type="date"
+            id="admission_date"
+            name="admission_date"
+            required
+          />
+        </fieldset>
+
+        <!-- Contact Information -->
+        <fieldset>
+          <legend>Contact Information</legend>
+          <label for="phone">Phone Number:</label>
+          <input
+            type="tel"
+            id="phone"
+            name="phone_number"
+            placeholder="123-456-7890"
+            required
+          />
+
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" required />
+
+          <label for="address">Address:</label>
+          <textarea id="address" name="address" rows="3" required></textarea>
+        </fieldset>
+
+        <!-- Banking Details -->
+        <fieldset>
+          <legend>Banking Details</legend>
+          <label for="bank_account">Bank Account Number:</label>
+          <input type="text" id="bank_account" name="bank_account" required />
+
+          <label for="ifsc">IFSC Code:</label>
+          <input type="text" id="ifsc" name="ifsc_code" required />
+        </fieldset>
+
+        <!-- Submit Button -->
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>

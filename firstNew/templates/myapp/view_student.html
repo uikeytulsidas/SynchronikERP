@@ -1,0 +1,83 @@
+{% include 'myapp/header.html' %}
+
+<h1>Student Details</h1>
+{% if student_data %}
+<table border="1">
+  <tr>
+    <th>Username</th>
+    <td>{{ student_data.1 }}</td>
+  </tr>
+  <tr>
+    <th>Email</th>
+    <td>{{ student_data.2 }}</td>
+  </tr>
+  <tr>
+    <th>Name</th>
+    <td>{{ student_data.3|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Date of Birth</th>
+    <td>{{ student_data.4|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Gender</th>
+    <td>{{ student_data.5|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Admission Date</th>
+    <td>{{ student_data.6|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Phone Number</th>
+    <td>{{ student_data.7|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Contact Email</th>
+    <td>{{ student_data.8|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Address</th>
+    <td>{{ student_data.9|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Class 10 Score</th>
+    <td>{{ student_data.10|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Class 12 Score</th>
+    <td>{{ student_data.11|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Graduation Score</th>
+    <td>{{ student_data.12|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Bank Account</th>
+    <td>{{ student_data.13|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>IFSC Code</th>
+    <td>{{ student_data.14|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Bank Name</th>
+    <td>{{ student_data.15|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Parent Name</th>
+    <td>{{ student_data.16|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Relationship</th>
+    <td>{{ student_data.17|default:"N/A" }}</td>
+  </tr>
+  <tr>
+    <th>Contact Number</th>
+    <td>{{ student_data.18|default:"N/A" }}</td>
+  </tr>
+</table>
+{% else %}
+<p>No student information found.</p>
+{% endif %}
+
+{% include 'myapp/footer.html' %}

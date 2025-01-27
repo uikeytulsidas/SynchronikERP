@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Employee</title>
+    <script>
+      function toggleFields() {
+        var employeeType = document.getElementById('id_employee_type').value;
+        var programField = document.getElementById('program-field');
+        var departmentField = document.getElementById('department-field');
+        var positionField = document.getElementById('position-field');
+        var teachingSubjectField = document.getElementById('teaching-subject-field');
+
+        if (employeeType === 'teacher' || employeeType === 'hod') {
+          programField.style.display = 'block';
+          departmentField.style.display = 'block';
+          positionField.style.display = 'none';
+          teachingSubjectField.style.display = 'none';
+        } else if (employeeType === 'scholarship_officer' || employeeType === 'fee_collector' || employeeType === 'admin') {
+          programField.style.display = 'none';
+          departmentField.style.display = 'none';
+          positionField.style.display = 'none';
+          teachingSubjectField.style.display = 'none';
+        } else {
+          programField.style.display = 'block';
+          departmentField.style.display = 'block';
+          positionField.style.display = 'block';
+          teachingSubjectField.style.display = 'block';
+        }
+      }
+
+      function updateInstitutes() {
+        var universityId = document.getElementById('id_university').value;
+        console.log('Selected University ID:', universityId);  // Debug log
+        if (!universityId) {
+          return;
+        }
+        fetch(`/load-institutes/?university_id=${universityId}`)
+          .then(response => response.json())
+          .then(data => {
+            var instituteField = document.getElementById('id_institute');
+            instituteField.innerHTML = '<option value="">Select Institute</option>';
+            data.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              instituteField.appendChild(opt);
+            });
+            updatePrograms();  // Update programs after institutes are loaded
+          })
+          .catch(error => console.error('Error loading institutes:', error));
+      }
+
+      function updatePrograms() {
+        var instituteId = document.getElementById('id_institute').value;
+        console.log('Selected Institute ID:', instituteId);  // Debug log
+        if (!instituteId) {
+          return;
+        }
+        fetch(`/load-programs/?institute_id=${instituteId}`)
+          .then(response => response.json())
+          .then(data => {
+            var programField = document.getElementById('id_program');
+            programField.innerHTML = '<option value="">Select Program</option>';
+            data.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              programField.appendChild(opt);
+            });
+            updateDepartments();  // Update departments after programs are loaded
+          })
+          .catch(error => console.error('Error loading programs:', error));
+      }
+
+      function updateDepartments() {
+        var programId = document.getElementById('id_program').value;
+        console.log('Selected Program ID:', programId);  // Debug log
+        if (!programId) {
+          return;
+        }
+        fetch(`/load-departments/?program_id=${programId}`)
+          .then(response => response.json())
+          .then(data => {
+            var departmentField = document.getElementById('id_department');
+            departmentField.innerHTML = '<option value="">Select Department</option>';
+            data.forEach(function (option) {
+              var opt = document.createElement('option');
+              opt.value = option.id;
+              opt.textContent = option.name;
+              departmentField.appendChild(opt);
+            });
+          })
+          .catch(error => console.error('Error loading departments:', error));
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Register Employee</h1>
+    {% if messages %}
+    <div>
+      {% for message in messages %}
+      <div class="{% if message.tags %}{{ message.tags }}-message{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <div>
+        <label for="id_email">Email:</label>
+        {{ form.email }}
+      </div>
+      <div>
+        <label for="id_hire_date">Hire Date:</label>
+        {{ form.hire_date }}
+      </div>
+      <div>
+        <label for="id_mobile_number">Mobile Number:</label>
+        {{ form.mobile_number }}
+      </div>
+      <div>
+        <label for="id_aadhar_card_number">Aadhar Card Number:</label>
+        {{ form.aadhar_card_number }}
+      </div>
+      <div>
+        <label for="id_employee_id">Employee ID:</label>
+        {{ form.employee_id }}
+      </div>
+      <div>
+        <label for="id_employee_type">Employee Type:</label>
+        {{ form.employee_type }}
+      </div>
+      <div>
+        <label for="id_university">University:</label>
+        {{ form.university }}
+      </div>
+      <div>
+        <label for="id_institute">Institute:</label>
+        <select id="id_institute" name="institute">
+          <option value="">Select Institute</option>
+        </select>
+      </div>
+      <div id="program-field">
+        <label for="id_program">Program:</label>
+        <select id="id_program" name="program">
+          <option value="">Select Program</option>
+        </select>
+      </div>
+      <div id="department-field">
+        <label for="id_department">Department:</label>
+        <select id="id_department" name="department">
+          <option value="">Select Department</option>
+        </select>
+      </div>
+      <div id="position-field">
+        <label for="id_position">Position:</label>
+        {{ form.position }}
+      </div>
+      <div id="teaching-subject-field">
+        <label for="id_teaching_subject">Teaching Subject:</label>
+        {{ form.teaching_subject }}
+      </div>
+      <button type="submit">Complete Registration</button>
+    </form>
+    <script>
+      document.getElementById('id_employee_type').addEventListener('change', toggleFields);
+      toggleFields();  // Initial call to set the correct state on page load
+      document.getElementById('id_university').addEventListener('change', function() {
+        console.log('University changed');  // Debug log
+        updateInstitutes();
+      });
+      document.getElementById('id_institute').addEventListener('change', function() {
+        console.log('Institute changed');  // Debug log
+        updatePrograms();
+      });
+      document.getElementById('id_program').addEventListener('change', function() {
+        console.log('Program changed');  // Debug log
+        updateDepartments();
+      });
+      console.log('Page loaded');  // Debug log
+    </script>
+  </body>
+</html>
