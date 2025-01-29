@@ -69,44 +69,20 @@
               opt.textContent = option.name;
               programField.appendChild(opt);
             });
-            updateDepartments();  // Update departments after programs are loaded
-          }
-        };
-        xhr.send();
-      }
-
-      function updateDepartments() {
-        var programId = document.getElementById('id_program').value;
-        if (!programId) {
-          return;
-        }
-        var departmentField = document.getElementById('id_department');
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', '{% url "load_departments" %}?program_id=' + programId, true);
-        xhr.onload = function () {
-          if (xhr.status === 200) {
-            var options = JSON.parse(xhr.responseText);
-            departmentField.innerHTML = '<option value="">Select Department</option>';
-            options.forEach(function (option) {
-              var opt = document.createElement('option');
-              opt.value = option.id;
-              opt.textContent = option.name;
-              departmentField.appendChild(opt);
-            });
-            updateBranches();  // Update branches after departments are loaded
+            updateBranches();  // Update branches after programs are loaded
           }
         };
         xhr.send();
       }
 
       function updateBranches() {
-        var departmentId = document.getElementById('id_department').value;
-        if (!departmentId) {
+        var programId = document.getElementById('id_program').value;
+        if (!programId) {
           return;
         }
         var branchField = document.getElementById('id_branch');
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '{% url "load_branches" %}?department_id=' + departmentId, true);
+        xhr.open('GET', '{% url "load_branches" %}?program_id=' + programId, true);
         xhr.onload = function () {
           if (xhr.status === 200) {
             var options = JSON.parse(xhr.responseText);
@@ -175,20 +151,11 @@
         </select>
       </div>
       <div>
-        <label for="id_department">Department:</label>
-        <select id="id_department" name="department">
-          <option value="">Select Department</option>
-          {% for department in form.fields.department.queryset %}
-            <option value="{{ department.id }}" data-program="{{ department.program_id }}">{{ department.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div>
         <label for="id_branch">Branch:</label>
         <select id="id_branch" name="branch">
           <option value="">Select Branch</option>
           {% for branch in form.fields.branch.queryset %}
-            <option value="{{ branch.id }}" data-department="{{ branch.department_id }}">{{ branch.name }}</option>
+            <option value="{{ branch.id }}" data-program="{{ branch.program_id }}">{{ branch.name }}</option>
           {% endfor %}
         </select>
       </div>
@@ -210,14 +177,10 @@
       document.getElementById('id_institute').addEventListener('change', function() {
         updatePrograms();
       });
-      document.getElementById('id_program').addEventListener('change', function() {
-        updateDepartments();
-      });
-      document.getElementById('id_department').addEventListener('change', updateBranches);
+      document.getElementById('id_program').addEventListener('change', updateBranches);
       updateSemesters();  // Initial call to set the correct state on page load
       updateInstitutes();  // Initial call to set the correct state on page load
       updatePrograms();  // Initial call to set the correct state on page load
-      updateDepartments();  // Initial call to set the correct state on page load
       updateBranches();  // Initial call to set the correct state on page load
     </script>
   </body>

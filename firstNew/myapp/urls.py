@@ -52,6 +52,5 @@ urlpatterns = [
 
     path('load-institutes/', views.load_institutes, name='load_institutes'),
     path('load-programs/', views.load_programs, name='load_programs'),
-    path('load-departments/', views.load_departments, name='load_departments'),
     path('load-branches/', views.load_branches, name='load_branches'),
 ]
