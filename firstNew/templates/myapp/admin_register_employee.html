@@ -8,23 +8,19 @@
       function toggleFields() {
         var employeeType = document.getElementById('id_employee_type').value;
         var programField = document.getElementById('program-field');
-        var departmentField = document.getElementById('department-field');
         var positionField = document.getElementById('position-field');
         var teachingSubjectField = document.getElementById('teaching-subject-field');
 
         if (employeeType === 'teacher' || employeeType === 'hod') {
           programField.style.display = 'block';
-          departmentField.style.display = 'block';
           positionField.style.display = 'none';
           teachingSubjectField.style.display = 'none';
         } else if (employeeType === 'scholarship_officer' || employeeType === 'fee_collector' || employeeType === 'admin') {
           programField.style.display = 'none';
-          departmentField.style.display = 'none';
           positionField.style.display = 'none';
           teachingSubjectField.style.display = 'none';
         } else {
           programField.style.display = 'block';
-          departmentField.style.display = 'block';
           positionField.style.display = 'block';
           teachingSubjectField.style.display = 'block';
         }
@@ -69,30 +65,8 @@
               opt.textContent = option.name;
               programField.appendChild(opt);
             });
-            updateDepartments();  // Update departments after programs are loaded
           })
           .catch(error => console.error('Error loading programs:', error));
-      }
-
-      function updateDepartments() {
-        var programId = document.getElementById('id_program').value;
-        console.log('Selected Program ID:', programId);  // Debug log
-        if (!programId) {
-          return;
-        }
-        fetch(`/load-departments/?program_id=${programId}`)
-          .then(response => response.json())
-          .then(data => {
-            var departmentField = document.getElementById('id_department');
-            departmentField.innerHTML = '<option value="">Select Department</option>';
-            data.forEach(function (option) {
-              var opt = document.createElement('option');
-              opt.value = option.id;
-              opt.textContent = option.name;
-              departmentField.appendChild(opt);
-            });
-          })
-          .catch(error => console.error('Error loading departments:', error));
       }
     </script>
   </head>

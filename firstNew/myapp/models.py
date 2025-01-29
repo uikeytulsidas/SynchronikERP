@@ -9,6 +9,9 @@ from django.utils.crypto import get_random_string
 from django.utils.timezone import now
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from .middleware import get_current_user
 
 # Custom user manager for handling user creation
 class CustomUserManager(BaseUserManager):
@@ -131,45 +134,201 @@ def save_user_profile(sender, instance, **kwargs):
 
 class University(models.Model):
     name = models.CharField(max_length=255)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    contact_no = models.CharField(max_length=15, null=True, blank=True)
+    website = models.CharField(max_length=255, null=True, blank=True)
+    estd_year = models.IntegerField(null=True, blank=True)
+    status = models.CharField(max_length=8, choices=[('Active', 'Active'), ('Inactive', 'Inactive')], default='Active')
+    uni_code = models.CharField(max_length=50, null=True, blank=True)
+    affil_status = models.CharField(max_length=10, choices=[('Affiliated', 'Affiliated'), ('Autonomous', 'Autonomous')], default='Affiliated')
+    accred_details = models.CharField(max_length=255, null=True, blank=True)
+    uni_type = models.CharField(max_length=7, choices=[('Public', 'Public'), ('Private', 'Private'), ('Deemed', 'Deemed')], default='Public')
+    addl_contact_no = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    chancellor_name = models.CharField(max_length=255, null=True, blank=True)
+    entry_person = models.CharField(max_length=255, null=True, blank=True)
+    entry_date = models.DateField(null=True, blank=True)
+    edit_person = models.CharField(max_length=255, null=True, blank=True)
+    edit_date = models.DateField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    sort_order = models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        user = get_current_user()
+        if user:
+            if not self.pk:
+                self.entry_person = user.username
+                self.entry_date = timezone.now().date()
+            self.edit_person = user.username
+            self.edit_date = timezone.now().date()
+            logger.info(f"User {user.username} made changes to University: {self.name}")
+        else:
+            logger.warning("No user found in thread-local storage")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
 class Institute(models.Model):
-    name = models.CharField(max_length=255)
     university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='institutes')
+    name = models.CharField(max_length=255)
+    inst_code = models.CharField(max_length=50)
+    address = models.CharField(max_length=255, null=True, blank=True)
+    website = models.CharField(max_length=255, null=True, blank=True)
+    affil_year = models.IntegerField(null=True, blank=True)
+    autonomy_status = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], default='No')
+    acad_autonomy_year = models.IntegerField(null=True, blank=True)
+    curric_type = models.CharField(max_length=255, null=True, blank=True)
+    exam_ctrl = models.CharField(max_length=255, null=True, blank=True)
+    degree_auth = models.CharField(max_length=255, null=True, blank=True)
+    accred_details = models.CharField(max_length=255, null=True, blank=True)
+    contact_no = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    director_name = models.CharField(max_length=255, null=True, blank=True)
+    entry_person = models.CharField(max_length=255, null=True, blank=True)
+    entry_date = models.DateField(null=True, blank=True)
+    edit_person = models.CharField(max_length=255, null=True, blank=True)
+    edit_date = models.DateField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    sort_order = models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        user = get_current_user()
+        if user:
+            if not self.pk:
+                self.entry_person = user.username
+                self.entry_date = timezone.now().date()
+            self.edit_person = user.username
+            self.edit_date = timezone.now().date()
+            logger.info(f"User {user.username} made changes to Institute: {self.name}")
+        else:
+            logger.warning("No user found in thread-local storage")
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
 class Program(models.Model):
-    name = models.CharField(max_length=255)
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE, related_name='programs')
-
-    def __str__(self):
-        return self.name
-
-class Department(models.Model):
     name = models.CharField(max_length=255)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='departments')
+    program_code = models.CharField(max_length=50)
+    duration = models.IntegerField()
+    level = models.CharField(max_length=50)
+    type = models.CharField(max_length=50)
+    affil_status = models.CharField(max_length=10, choices=[('Affiliated', 'Affiliated'), ('Autonomous', 'Autonomous')], default='Affiliated')
+    intake_capacity = models.IntegerField()
+    program_outcome = models.TextField()
+    entry_person = models.CharField(max_length=255, null=True, blank=True)
+    entry_date = models.DateField(null=True, blank=True)
+    edit_person = models.CharField(max_length=255, null=True, blank=True)
+    edit_date = models.DateField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    sort_order = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        logger.debug(f"Saving Department: {self.name}, Program ID: {self.program_id}")
+        user = get_current_user()
+        if user:
+            if not self.pk:
+                self.entry_person = user.username
+                self.entry_date = timezone.now().date()
+            self.edit_person = user.username
+            self.edit_date = timezone.now().date()
+            logger.info(f"User {user.username} made changes to Program: {self.name}")
+        else:
+            logger.warning("No user found in thread-local storage")
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
 
 class Branch(models.Model):
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='branches')
     name = models.CharField(max_length=255)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='branches')
+    branch_code = models.CharField(max_length=50)
+    total_years = models.IntegerField()
+    intake_capacity = models.IntegerField()
+    add_on_capacity = models.IntegerField()
+    entry_person = models.CharField(max_length=255, null=True, blank=True)
+    entry_date = models.DateField(null=True, blank=True)
+    edit_person = models.CharField(max_length=255, null=True, blank=True)
+    edit_date = models.DateField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    sort_order = models.IntegerField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
-        logger.debug(f"Saving Branch: {self.name}, Department ID: {self.department_id}")
+        user = get_current_user()
+        if user:
+            if not self.pk:
+                self.entry_person = user.username
+                self.entry_date = timezone.now().date()
+            self.edit_person = user.username
+            self.edit_date = timezone.now().date()
+            logger.info(f"User {user.username} made changes to Branch: {self.name}")
+        else:
+            logger.warning("No user found in thread-local storage")
         super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
+
+class Year(models.Model):
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='years')
+    year_of_study = models.IntegerField()
+    total_semesters = models.IntegerField()
+    intake_capacity = models.IntegerField()
+    add_on_capacity = models.IntegerField(default=0)
+    lateral_entry = models.BooleanField(default=False)
+    entry_person = models.CharField(max_length=100, null=True, blank=True)
+    entry_date = models.DateField(default=timezone.now)
+    edit_person = models.CharField(max_length=100, null=True, blank=True)
+    edit_date = models.DateField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    sort_order = models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        user = get_current_user()
+        if user:
+            if not self.pk:
+                self.entry_person = user.username
+                self.entry_date = timezone.now().date()
+            self.edit_person = user.username
+            self.edit_date = timezone.now().date()
+            logger.info(f"User {user.username} made changes to Year: {self.year_of_study}")
+        else:
+            logger.warning("No user found in thread-local storage")
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Year {self.year_of_study} for Branch: {self.branch.name}"
+
+class Semester(models.Model):
+    year = models.ForeignKey(Year, on_delete=models.CASCADE, related_name='semesters')
+    semester_number = models.IntegerField()
+    start_date = models.DateField()
+    end_date = models.DateField()
+    sem_type = models.CharField(max_length=10)
+    entry_person = models.CharField(max_length=100, null=True, blank=True)
+    entry_date = models.DateField(default=timezone.now)
+    edit_person = models.CharField(max_length=100, null=True, blank=True)
+    edit_date = models.DateField(null=True, blank=True)
+    is_deleted = models.BooleanField(default=False)
+    sort_order = models.IntegerField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        user = get_current_user()
+        if user:
+            if not self.pk:
+                self.entry_person = user.username
+                self.entry_date = timezone.now().date()
+            self.edit_person = user.username
+            self.edit_date = timezone.now().date()
+            logger.info(f"User {user.username} made changes to Semester: {self.semester_number}")
+        else:
+            logger.warning("No user found in thread-local storage")
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Semester {self.semester_number} for Year: {self.year.year_of_study}"
 
 # Master student model
 class masterStudent(models.Model):
@@ -189,7 +348,6 @@ class masterStudent(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE)
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     admission_year = models.IntegerField(default=2023)
     semester = models.IntegerField(default=1)
@@ -265,7 +423,7 @@ class masterEmployee(models.Model):
     university = models.ForeignKey(University, on_delete=models.CASCADE)
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
     teaching_subject = models.CharField(max_length=100, null=True, blank=True)
     # New fields for role-specific information
     subjects_taught = models.TextField(null=True, blank=True)
@@ -273,7 +431,6 @@ class masterEmployee(models.Model):
     qualifications = models.TextField(null=True, blank=True)
     teaching_experience = models.IntegerField(null=True, blank=True)
     special_skills_certifications = models.TextField(null=True, blank=True)
-    department_name = models.CharField(max_length=100, null=True, blank=True)
     years_of_experience_in_institution = models.IntegerField(null=True, blank=True)
     staff_supervised = models.IntegerField(null=True, blank=True)
     key_responsibilities = models.TextField(null=True, blank=True)
@@ -318,12 +475,3 @@ class EmployeeBank(models.Model):
 
     def __str__(self):
         return f"{self.employee.name} - Bank Details"
-
-# Employee department model
-class EmployeeDepartment(models.Model):
-    employee = models.ForeignKey(masterEmployee, on_delete=models.CASCADE, related_name='departments')
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='employee_departments')
-    subject = models.CharField(max_length=100)
-
-    def __str__(self):
-        return f"{self.employee.name} - {self.department.name} - {self.subject}"

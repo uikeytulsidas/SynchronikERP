@@ -9,7 +9,7 @@ from django.core.mail import send_mail
 import random
 import string
 
-from .models import User, masterStudent, StudentContact, StudentAcademic, StudentBank, StudentParent, Department, masterEmployee, EmployeeContact, EmployeeAcademic, EmployeeBank, EmployeeDepartment
+from .models import User, masterStudent, StudentContact, StudentAcademic, StudentBank, StudentParent, masterEmployee, EmployeeContact, EmployeeAcademic, EmployeeBank, Institute, Program, Branch
 from .views import admin_register_student, admin_register_employee
 
 # Custom admin page
@@ -80,9 +80,12 @@ admin.site.register(StudentBank)
 admin.site.register(StudentParent)
 
 # Register the new models with the custom admin site
-admin_site.register(Department)
+admin_site.register(Institute)
+admin_site.register(Program)
+admin_site.register(Branch)
 admin_site.register(masterEmployee)
 admin_site.register(EmployeeContact)
 admin_site.register(EmployeeAcademic)
 admin_site.register(EmployeeBank)
-admin_site.register(EmployeeDepartment)
+# Remove EmployeeDepartment registration
+# admin_site.register(EmployeeDepartment)

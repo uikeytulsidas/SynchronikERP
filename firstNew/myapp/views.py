@@ -4,7 +4,7 @@ from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
 from django.contrib.auth.views import PasswordResetView
 from django.core.mail import send_mail
 from django.db import connection, IntegrityError, transaction
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
@@ -17,8 +17,9 @@ import logging
 import random
 import re
 import string
+from django.utils import timezone
 
-from .models import User, UserOTP, Profile, masterStudent, masterEmployee, EmployeeDepartment, Department, EmployeeBank, EmployeeAcademic, EmployeeContact, Institute, Program, Branch
+from .models import User, UserOTP, Profile, masterStudent, masterEmployee, EmployeeBank, EmployeeAcademic, EmployeeContact, Institute, Program, Branch
 from .forms import StudentInfoForm, StudentParent, StudentBank, StudentAcademic, StudentContact, AdminUserCreationForm, EmployeeInfoForm, UserChangeForm, AdminUserRegistrationForm, EmployeeRegistrationForm, StudentRegistrationForm
 
 # Configure logger
@@ -282,7 +283,6 @@ def admin_register_student(request):
             university = form.cleaned_data['university']
             institute = form.cleaned_data['institute']
             program = form.cleaned_data['program']
-            department = form.cleaned_data['department']
             branch = form.cleaned_data['branch']
             admission_year = form.cleaned_data['admission_year']
             semester = form.cleaned_data['semester']
@@ -321,7 +321,6 @@ def admin_register_student(request):
                         university=university,
                         institute=institute,
                         program=program,
-                        department=department,
                         branch=branch,
                         admission_year=admission_year,
                         semester=semester
@@ -367,28 +366,16 @@ def load_programs(request):
         return JsonResponse({'error': 'No institute_id provided'}, status=400)
 
 @user_passes_test(lambda u: u.is_staff)
-def load_departments(request):
-    program_id = request.GET.get('program_id')
-    logger.debug(f"Fetching departments for program_id: {program_id}")  # Debug log
-    if program_id:
-        departments = Department.objects.filter(program_id=program_id).order_by('name')
-        logger.debug(f"Found departments: {list(departments.values('id', 'name'))}")  # Debug log
-        return JsonResponse(list(departments.values('id', 'name')), safe=False)
-    else:
-        logger.error("No program_id provided")
-        return JsonResponse({'error': 'No program_id provided'}, status=400)
-
-@user_passes_test(lambda u: u.is_staff)
 def load_branches(request):
-    department_id = request.GET.get('department_id')
-    logger.debug(f"Fetching branches for department_id: {department_id}")  # Debug log
-    if department_id:
-        branches = Branch.objects.filter(department_id=department_id).order_by('name')
+    program_id = request.GET.get('program_id')
+    logger.debug(f"Fetching branches for program_id: {program_id}")  # Debug log
+    if program_id:
+        branches = Branch.objects.filter(program_id=program_id).order_by('name')
         logger.debug(f"Found branches: {list(branches.values('id', 'name'))}")  # Debug log
         return JsonResponse(list(branches.values('id', 'name')), safe=False)
     else:
-        logger.error("No department_id provided")
-        return JsonResponse({'error': 'No department_id provided'}, status=400)
+        logger.error("No program_id provided")
+        return JsonResponse({'error': 'No program_id provided'}, status=400)
 
 @user_passes_test(lambda u: u.is_staff)
 def admin_register_employee(request):
@@ -405,8 +392,8 @@ def admin_register_employee(request):
                 employee_type = form.cleaned_data['employee_type']
                 university = form.cleaned_data['university']
                 institute = form.cleaned_data['institute']
-                department = form.cleaned_data['department'] if employee_type in ['teacher', 'hod'] else None
-                teaching_subject = form.cleaned_data['teaching_subject'] if employee_type == 'teacher' else None
+                program = form.cleaned_data['program'] if employee_type in ['teacher', 'hod'] else None
+                branch = form.cleaned_data['branch'] if employee_type == 'teacher' else None
                 username = generate_username(email)
                 password = get_random_string(length=8)
 
@@ -440,8 +427,8 @@ def admin_register_employee(request):
                         position=position,
                         employee_id=employee_id,
                         employee_type=employee_type,
-                        department=department,
-                        teaching_subject=teaching_subject,
+                        program=program,
+                        branch=branch,
                         university=university,
                         institute=institute
                     )
@@ -745,15 +732,12 @@ def view_employee(request, employee_id):
             SELECT u.id, u.username, u.email, me.name, me.date_of_birth, me.gender, me.hire_date,
                    ec.phone_number, ec.email, ec.address,
                    ea.highest_degree, ea.institution, ea.year_of_passing,
-                   eb.bank_account, eb.ifsc_code, eb.bank_name,
-                   ed.subject, d.name as department_name
+                   eb.bank_account, eb.ifsc_code, eb.bank_name
             FROM myapp_user u
             LEFT JOIN myapp_masteremployee me ON u.username = me.user_id
             LEFT JOIN myapp_employeecontact ec ON me.id = ec.employee_id
             LEFT JOIN myapp_employeeacademic ea ON me.id = ea.employee_id
             LEFT JOIN myapp_employeebank eb ON me.id = eb.employee_id
-            LEFT JOIN myapp_employeedepartment ed ON me.id = ed.employee_id
-            LEFT JOIN myapp_department d ON ed.department_id = d.id
             WHERE me.id = %s
         """, [employee_id])
         employee_data = cursor.fetchone()
@@ -788,66 +772,11 @@ def profile_view(request):
                 SELECT me.id, me.name, me.date_of_birth, me.gender, me.hire_date,
                        ec.phone_number, ec.email, ec.address,
                        ea.highest_degree, ea.institution, ea.year_of_passing,
-                       eb.bank_account, eb.ifsc_code, eb.bank_name,
-                       ed.subject, d.name as department_name
+                       eb.bank_account, eb.ifsc_code, eb.bank_name
                 FROM myapp_masteremployee me
                 LEFT JOIN myapp_employeecontact ec ON me.id = ec.employee_id
                 LEFT JOIN myapp_employeeacademic ea ON me.id = ea.employee_id
                 LEFT JOIN myapp_employeebank eb ON me.id = eb.employee_id
-                LEFT JOIN myapp_employeedepartment ed ON me.id = ed.employee_id
-                LEFT JOIN myapp_department d ON ed.department_id = d.id
-                WHERE me.user_id = %s
-            """, [user.username])
-            user_data = cursor.fetchone()
-
-    if request.method == 'POST':
-        field = request.POST.get('field')
-        value = request.POST.get('value')
-        if field and value:
-            if field == 'user_type' and not request.user.is_staff:
-                messages.error(request, "You do not have permission to change the user type.")
-            else:
-                setattr(user, field, value)
-                user.save()
-                messages.success(request, f"Your {field} has been updated successfully.")
-                return redirect('profile')
-
-@login_required
-def profile_view(request):
-    user = request.user
-    user_data = None
-
-    if user.user_type == 'student':
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                SELECT u.id, u.username, u.email, ms.name, ms.date_of_birth, ms.gender, ms.admission_date,
-                       sc.phone_number, sc.email AS contact_email, sc.address,
-                       sa.class_10_score, sa.class_12_score, sa.graduation_score,
-                       sb.bank_account, sb.ifsc_code, sb.bank_name,
-                       sp.parent_name, sp.relationship, sp.contact_number
-                FROM myapp_user u
-                LEFT JOIN myapp_masterstudent ms ON u.username = ms.user_id
-                LEFT JOIN myapp_studentcontact sc ON ms.id = sc.student_id
-                LEFT JOIN myapp_studentacademic sa ON ms.id = sa.student_id
-                LEFT JOIN myapp_studentbank sb ON ms.id = sb.student_id
-                LEFT JOIN myapp_studentparent sp ON ms.id = sp.student_id
-                WHERE u.id = %s
-            """, [user.id])
-            user_data = cursor.fetchone()
-    elif user.user_type == 'teacher':
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                SELECT me.id, me.name, me.date_of_birth, me.gender, me.hire_date,
-                       ec.phone_number, ec.email, ec.address,
-                       ea.highest_degree, ea.institution, ea.year_of_passing,
-                       eb.bank_account, eb.ifsc_code, eb.bank_name,
-                       ed.subject, d.name as department_name
-                FROM myapp_masteremployee me
-                LEFT JOIN myapp_employeecontact ec ON me.id = ec.employee_id
-                LEFT JOIN myapp_employeeacademic ea ON me.id = ea.employee_id
-                LEFT JOIN myapp_employeebank eb ON me.id = eb.employee_id
-                LEFT JOIN myapp_employeedepartment ed ON me.id = ed.employee_id
-                LEFT JOIN myapp_department d ON ed.department_id = d.id
                 WHERE me.user_id = %s
             """, [user.username])
             user_data = cursor.fetchone()
@@ -866,6 +795,37 @@ def profile_view(request):
 
     return render(request, 'myapp/profile.html', {'user_data': user_data})
 
-    return render(request, 'myapp/profile.html', {'user_data': user_data})
+from django.db.models import F
+from .models import University
+
+def create_university(request):
+    if request.method == 'POST':
+        university = University(
+            name=request.POST['name'],
+            # ...other fields...
+        )
+        university.save()
+        return HttpResponse("University created successfully")
+    return render(request, 'create_university.html')
+
+def update_university(request, university_id):
+    if request.method == 'POST':
+        university = University.objects.get(id=university_id)
+        university.name = request.POST['name']
+        # ...other fields...
+        university.save()
+        return HttpResponse("University updated successfully")
+    return render(request, 'update_university.html', {'university': University.objects.get(id=university_id)})
+
+def bulk_update_universities(request):
+    if request.method == 'POST':
+        user = request.user
+        University.objects.filter(status='Active').update(
+            status='Inactive',
+            edit_person=user.username,
+            edit_date=timezone.now().date()
+        )
+        return HttpResponse("Universities updated successfully")
+    return render(request, 'bulk_update_universities.html')
 
 # ...existing code...
