@@ -1,0 +1,30 @@
+{% include 'myapp/header.html' %}
+
+<h1>Student Section</h1>
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Mobile Number</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+        <tr>
+            <td>{{ student.name }}</td>
+            <td>{{ student.email }}</td>
+            <td>{{ student.mobile_number }}</td>
+            <td>
+                <a href="{% url 'profile' student.user.id %}" class="btn btn-primary">View</a>
+                <a href="{% url 'edit_student_permissions' student.id %}" class="btn btn-secondary">Edit</a>
+                <a href="{% url 'delete_student' student.id %}" class="btn btn-danger">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include 'myapp/footer.html' %}

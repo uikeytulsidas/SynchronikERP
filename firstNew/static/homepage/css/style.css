@@ -1,0 +1,185 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #004080;
+  color: white;
+  padding: 10px 20px;
+  height: 50px;
+  position: fixed;
+  top: 0;
+  left: 50px; /* Adjust this dynamically with JavaScript */
+  width: calc(100% - 50px); /* Adjust this dynamically */
+  z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: left 0.3s ease, width 0.3s ease;
+}
+
+.header .left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header .left i {
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.header .left h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.header .right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header .right i {
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* Profile Icon Styling */
+.profile-icon {
+  width: 40px; /* Set size of the profile icon */
+  height: 40px;
+  border-radius: 50%; /* Makes the profile photo round */
+  object-fit: cover; /* Ensures the photo fits the circle */
+}
+.user-name {
+  font-size: 1rem;
+  color: white;
+  margin-right: 10px;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  display: none;
+  flex-direction: column;
+  width: 200px;
+}
+
+.profile-dropdown a {
+  text-decoration: none;
+  color: #333;
+  padding: 10px;
+  border-bottom: 1px solid #f1f1f1;
+  display: block;
+  font-size: 14px;
+}
+.profile-dropdown a i {
+  font-size: 15px !important; /* Adjust icon size */
+  width: 20px; /* Ensures uniform width for all icons */
+  text-align: center;
+  color: #25272a; /* Matching icon color with the theme */
+}
+
+.profile-dropdown a:hover {
+  background-color: #f8f9fa;
+}
+
+.profile-dropdown a:last-child {
+  border-bottom: none;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 50px; /* Sidebar width */
+  height: 100%;
+  background-color: #f8f9fa;
+  padding: 10px 20px 30px 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  transform: translateX(0);
+  transition: transform 0.3s ease;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+}
+/* Add styling for the company logo */
+.sidebar .company-logo {
+  width: 40px; /* Adjust logo width */
+  height: 40px; /* Adjust logo height */
+  margin-bottom: 20px; /* Spacing below the logo */
+  align-self: center; /* Center the logo */
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+
+.sidebar ul li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  text-overflow: ellipsis;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.sidebar ul li a i {
+  font-size: 1.2rem;
+  margin-right: 10px;
+}
+
+.sidebar ul li a:hover {
+  color: #007bff;
+}
+
+.sidebar ul li a .menu-label {
+  display: none;
+  font-size: 1rem;
+  margin-left: 15px; /* Align label to the right */
+  opacity: 0;
+  text-align: left; /* Ensure the text is left-aligned */
+  transition: opacity 0.3s, margin-left 0.5s;
+}
+
+.sidebar ul li:hover a .menu-label {
+  display: inline-block;
+  opacity: 1;
+  margin-left: 15px;
+}
+
+.content {
+  margin-left: 100px; /* Adjust this dynamically */
+  padding: 20px;
+  padding-top: 80px;
+  transition: margin-left 0.3s ease;
+}
+
+.content.fullwidth {
+  margin-left: 0;
+}
+
+footer {
+  background-color: #004080;
+  color: white;
+  text-align: center;
+  padding: 1px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  height: 30px;
+}

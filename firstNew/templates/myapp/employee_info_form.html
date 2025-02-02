@@ -99,29 +99,29 @@
               opt.textContent = option.name;
               programField.appendChild(opt);
             });
-            updateDepartments();  // Update departments after programs are loaded
+            updateBranches();  // Update branches after programs are loaded
           }
         };
         xhr.send();
       }
 
-      function updateDepartments() {
+      function updateBranches() {
         var programId = document.getElementById('id_program').value;
         if (!programId) {
           return;
         }
-        var departmentField = document.getElementById('id_department');
+        var branchField = document.getElementById('id_branch');
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', '{% url "load_departments" %}?program_id=' + programId, true);
+        xhr.open('GET', '{% url "load_branches" %}?program_id=' + programId, true);
         xhr.onload = function () {
           if (xhr.status === 200) {
             var options = JSON.parse(xhr.responseText);
-            departmentField.innerHTML = '<option value="">Select Department</option>';
+            branchField.innerHTML = '<option value="">Select Branch</option>';
             options.forEach(function (option) {
               var opt = document.createElement('option');
               opt.value = option.id;
               opt.textContent = option.name;
-              departmentField.appendChild(opt);
+              branchField.appendChild(opt);
             });
           }
         };
@@ -258,10 +258,16 @@
         {{ form.institute }}
         {% endif %}
 
-        {% if form.department %}
-        <label for="department">Department:</label>
-        {{ form.department.errors }}
-        {{ form.department }}
+        {% if form.program %}
+        <label for="program">Program:</label>
+        {{ form.program.errors }}
+        {{ form.program }}
+        {% endif %}
+
+        {% if form.branch %}
+        <label for="branch">Branch:</label>
+        {{ form.branch.errors }}
+        {{ form.branch }}
         {% endif %}
       </fieldset>
 
@@ -383,13 +389,53 @@
         {% endif %}
       </fieldset>
 
+      <!-- Additional Fields -->
+      <fieldset>
+        <legend>Additional Information</legend>
+        {% if form.highest_degree %}
+        <label for="highest_degree">Highest Degree:</label>
+        {{ form.highest_degree.errors }}
+        {{ form.highest_degree }}
+        {% endif %}
+
+        {% if form.institution %}
+        <label for="institution">Institution:</label>
+        {{ form.institution.errors }}
+        {{ form.institution }}
+        {% endif %}
+
+        {% if form.year_of_passing %}
+        <label for="year_of_passing">Year of Passing:</label>
+        {{ form.year_of_passing.errors }}
+        {{ form.year_of_passing }}
+        {% endif %}
+
+        {% if form.bank_account %}
+        <label for="bank_account">Bank Account:</label>
+        {{ form.bank_account.errors }}
+        {{ form.bank_account }}
+        {% endif %}
+
+        {% if form.ifsc_code %}
+        <label for="ifsc_code">IFSC Code:</label>
+        {{ form.ifsc_code.errors }}
+        {{ form.ifsc_code }}
+        {% endif %}
+
+        {% if form.bank_name %}
+        <label for="bank_name">Bank Name:</label>
+        {{ form.bank_name.errors }}
+        {{ form.bank_name }}
+        {% endif %}
+      </fieldset>
+
       <!-- Submit Button -->
       <button type="submit">Submit</button>
     </form>
     <script>
       document.getElementById('id_university').addEventListener('change', updateInstitutes);
       document.getElementById('id_institute').addEventListener('change', updatePrograms);
-      document.getElementById('id_program').addEventListener('change', updateDepartments);
+      document.getElementById('id_program').addEventListener('change', updateBranches);
       updateInstitutes();  // Initial call to set the correct state on page load
       toggleRoleSpecificFields();  // Initial call to set the correct state on page load
       document.getElementById('id_employee_type').addEventListener('change', toggleRoleSpecificFields);

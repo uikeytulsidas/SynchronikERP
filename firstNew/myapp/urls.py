@@ -20,9 +20,6 @@ urlpatterns = [
     path('change_password/', views.change_password_view, name='change_password'),
     path('student_info_form/', views.student_info_form_view, name='student_info_form'),
     path('employee_info_form/', views.employee_info_form_view, name='employee_info_form'),
-    path('register_student/', views.admin_register_student, name='admin_register_student'),
-    path('register_employee/', views.admin_register_employee, name='admin_register_employee'),
-    path('register_user/', views.admin_register_user, name='admin_register_user'),
     path('view_student/<int:student_id>/', views.view_student, name='view_student'),
     path('view_employee/<int:employee_id>/', views.view_employee, name='view_employee'),
     path('profile/', views.profile_view, name='profile'),
@@ -53,4 +50,29 @@ urlpatterns = [
     path('load-institutes/', views.load_institutes, name='load_institutes'),
     path('load-programs/', views.load_programs, name='load_programs'),
     path('load-branches/', views.load_branches, name='load_branches'),
+    path('admin_register/', views.admin_register, name='admin_register'),
+
+    # AJAX URLs for dynamic dropdowns
+    path('ajax/load-institutes/', views.load_institutes, name='load_institutes'),
+    path('ajax/load-programs/', views.load_programs, name='load_programs'),
+    path('ajax/load-branches/', views.load_branches, name='load_branches'),
+
+    # New URLs for admin register student and employee
+    path('admin_register_student/', views.admin_register_student, name='admin_register_student'),
+    path('admin_register_employee/', views.admin_register_employee, name='admin_register_employee'),
+
+    # New URLs for AJAX requests
+    path('viewProfile/', views.load_profile, name='load_profile'),
+    path('changePassword/', views.load_change_password, name='load_change_password'),
+    path('adminRegisterStudent/', views.load_admin_register_student, name='load_admin_register_student'),
+    path('adminRegisterEmployee/', views.load_admin_register_employee, name='load_admin_register_employee'),
+
+    # New URLs for student section
+    path('student_section/', views.student_section_view, name='student_section'),
+    path('edit_student_permissions/<int:student_id>/', views.edit_student_permissions, name='edit_student_permissions'),
+    path('student_home/', views.student_home_view, name='student_home'),
+
+    # New URL for student management
+    path('student_management/', views.student_management_view, name='student_management'),
 ]
+

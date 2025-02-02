@@ -118,6 +118,7 @@ class Profile(models.Model):
     first_login = models.BooleanField(default=True)
     mobile_number = models.CharField(max_length=15, null=True, blank=True)
     aadhar_card_number = models.CharField(max_length=12, null=True, blank=True)
+    # Remove sidebar_permissions field if it exists
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
@@ -170,11 +171,11 @@ class University(models.Model):
         return self.name
 
 class Institute(models.Model):
-    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='institutes')
     name = models.CharField(max_length=255)
+    university = models.ForeignKey(University, on_delete=models.CASCADE, related_name='institutes')
+    website = models.CharField(max_length=255, null=True, blank=True)
     inst_code = models.CharField(max_length=50)
     address = models.CharField(max_length=255, null=True, blank=True)
-    website = models.CharField(max_length=255, null=True, blank=True)
     affil_year = models.IntegerField(null=True, blank=True)
     autonomy_status = models.CharField(max_length=3, choices=[('Yes', 'Yes'), ('No', 'No')], default='No')
     acad_autonomy_year = models.IntegerField(null=True, blank=True)
@@ -209,8 +210,8 @@ class Institute(models.Model):
         return self.name
 
 class Program(models.Model):
-    institute = models.ForeignKey(Institute, on_delete=models.CASCADE, related_name='programs')
     name = models.CharField(max_length=255)
+    institute = models.ForeignKey(Institute, on_delete=models.CASCADE, related_name='programs')
     program_code = models.CharField(max_length=50)
     duration = models.IntegerField()
     level = models.CharField(max_length=50)
@@ -242,8 +243,8 @@ class Program(models.Model):
         return self.name
 
 class Branch(models.Model):
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='branches')
     name = models.CharField(max_length=255)
+    program = models.ForeignKey(Program, on_delete=models.CASCADE, related_name='branches')
     branch_code = models.CharField(max_length=50)
     total_years = models.IntegerField()
     intake_capacity = models.IntegerField()
@@ -340,7 +341,7 @@ class masterStudent(models.Model):
 
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    student_id = models.CharField(max_length=20, default="default_student_id")
+    student_id = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100, null=True, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES, null=True, blank=True)
@@ -351,13 +352,17 @@ class masterStudent(models.Model):
     branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
     admission_year = models.IntegerField(default=2023)
     semester = models.IntegerField(default=1)
+    abc_id = models.CharField(max_length=50, unique=True, null=True, blank=True)
+    aadhar_number = models.CharField(max_length=12, unique=True, null=True, blank=True)
+    mobile_number = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return self.name if self.name else f"Student ID: {self.student_id}"
 
 # Student contact information model
 class StudentContact(models.Model):
-    student = models.ForeignKey(masterStudent, on_delete=models.CASCADE, related_name='contacts')
+    student = models.OneToOneField(masterStudent, on_delete=models.CASCADE, related_name='contact')
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
@@ -367,7 +372,7 @@ class StudentContact(models.Model):
 
 # Student academic information model
 class StudentAcademic(models.Model):
-    student = models.ForeignKey(masterStudent, on_delete=models.CASCADE, related_name='academics')
+    student = models.OneToOneField(masterStudent, on_delete=models.CASCADE, related_name='academic')
     class_10_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     class_12_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     graduation_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
@@ -377,7 +382,7 @@ class StudentAcademic(models.Model):
 
 # Student banking information model
 class StudentBank(models.Model):
-    student = models.ForeignKey(masterStudent, on_delete=models.CASCADE, related_name='bank_details')
+    student = models.OneToOneField(masterStudent, on_delete=models.CASCADE, related_name='bank_details')
     bank_account = models.CharField(max_length=20, null=True, blank=True)
     ifsc_code = models.CharField(max_length=11, null=True, blank=True)
     bank_name = models.CharField(max_length=100, null=True, blank=True)
@@ -414,21 +419,28 @@ class masterEmployee(models.Model):
 
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee')
-    employee_id = models.CharField(max_length=20, default="default_employee_id")
+    employee_id = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
-    date_of_birth = models.DateField()
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
+    date_of_birth = models.DateField(null=True, blank=True)  # Allow null values
+    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)  # Corrected max_length
     hire_date = models.DateField()
     employee_type = models.CharField(max_length=50, default='admin')
     university = models.ForeignKey(University, on_delete=models.CASCADE)
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
-    program = models.ForeignKey(Program, on_delete=models.CASCADE, null=True, blank=True)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE, null=True, blank=True)
+    department = models.CharField(max_length=100, default='General')  # Added department field with default value
+    designation = models.CharField(max_length=100, default='Employee')  # Added designation field with default value
+    mobile_number = models.CharField(max_length=15, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    aadhar_number = models.CharField(max_length=12, unique=True, null=True, blank=True)
+    position = models.CharField(max_length=100, null=True, blank=True)
     teaching_subject = models.CharField(max_length=100, null=True, blank=True)
+    highest_qualification = models.CharField(max_length=100, null=True, blank=True)  # Added highest_qualification field
+    status = models.CharField(max_length=50, null=True, blank=True)  # Added status field
+    date_of_joining = models.DateField(null=True, blank=True)  # Added date_of_joining field
     # New fields for role-specific information
     subjects_taught = models.TextField(null=True, blank=True)
     classes_grades_assigned = models.TextField(null=True, blank=True)
-    qualifications = models.TextField(null=True, blank=True)
+    # qualification = models.TextField(null=True, blank=True)  # Corrected field name
     teaching_experience = models.IntegerField(null=True, blank=True)
     special_skills_certifications = models.TextField(null=True, blank=True)
     years_of_experience_in_institution = models.IntegerField(null=True, blank=True)
@@ -448,7 +460,7 @@ class masterEmployee(models.Model):
 
 # Employee contact information model
 class EmployeeContact(models.Model):
-    employee = models.ForeignKey(masterEmployee, on_delete=models.CASCADE, related_name='contacts')
+    employee = models.OneToOneField(masterEmployee, on_delete=models.CASCADE, related_name='contact')
     phone_number = models.CharField(max_length=15, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
@@ -458,7 +470,7 @@ class EmployeeContact(models.Model):
 
 # Employee academic information model
 class EmployeeAcademic(models.Model):
-    employee = models.ForeignKey(masterEmployee, on_delete=models.CASCADE, related_name='academics')
+    employee = models.OneToOneField(masterEmployee, on_delete=models.CASCADE, related_name='academic')
     highest_degree = models.CharField(max_length=100)
     institution = models.CharField(max_length=100)
     year_of_passing = models.IntegerField()
@@ -468,10 +480,20 @@ class EmployeeAcademic(models.Model):
 
 # Employee banking information model
 class EmployeeBank(models.Model):
-    employee = models.ForeignKey(masterEmployee, on_delete=models.CASCADE, related_name='bank_details')
+    employee = models.OneToOneField(masterEmployee, on_delete=models.CASCADE, related_name='bank_details')
     bank_account = models.CharField(max_length=20, null=True, blank=True)
     ifsc_code = models.CharField(max_length=11, null=True, blank=True)
     bank_name = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"{self.employee.name} - Bank Details"
+
+class StudentPermission(models.Model):
+    student = models.OneToOneField(masterStudent, on_delete=models.CASCADE, related_name='permissions')
+    can_view_profile = models.BooleanField(default=False)
+    can_edit_profile = models.BooleanField(default=False)
+    can_delete_profile = models.BooleanField(default=False)
+    # Add more fields as needed for other permissions
+
+    def __str__(self):
+        return f"Permissions for {self.student.name}"

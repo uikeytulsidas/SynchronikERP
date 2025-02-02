@@ -1,0 +1,23 @@
+{% include 'myapp/header.html' %}
+
+<h1>Edit Permissions for {{ student.name }}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="can_view_profile" id="can_view_profile" {% if permissions.can_view_profile %}checked{% endif %}>
+        <label class="form-check-label" for="can_view_profile">Can View Profile</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="can_edit_profile" id="can_edit_profile" {% if permissions.can_edit_profile %}checked{% endif %}>
+        <label class="form-check-label" for="can_edit_profile">Can Edit Profile</label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="can_delete_profile" id="can_delete_profile" {% if permissions.can_delete_profile %}checked{% endif %}>
+        <label class="form-check-label" for="can_delete_profile">Can Delete Profile</label>
+    </div>
+    <!-- Add more permissions as needed -->
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+{% include 'myapp/footer.html' %}
