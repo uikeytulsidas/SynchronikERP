@@ -2,123 +2,167 @@
 
 <h1>Your Profile</h1>
 
-{% if user_data %}
-<table border="1">
-  <tr>
-    <th>Username</th>
-    <td>{{ user_data.1 }}</td>
-    <td><button onclick="editField('username', '{{ user_data.1 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Email</th>
-    <td>{{ user_data.2 }}</td>
-    <td><button onclick="editField('email', '{{ user_data.2 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Name</th>
-    <td>{{ user_data.3|default:"N/A" }}</td>
-    <td><button onclick="editField('name', '{{ user_data.3 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Date of Birth</th>
-    <td>{{ user_data.4|default:"N/A" }}</td>
-    <td><button onclick="editField('date_of_birth', '{{ user_data.4 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Gender</th>
-    <td>{{ user_data.5|default:"N/A" }}</td>
-    <td><button onclick="editField('gender', '{{ user_data.5 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Admission Date</th>
-    <td>{{ user_data.6|default:"N/A" }}</td>
-    <td><button onclick="editField('admission_date', '{{ user_data.6 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Phone Number</th>
-    <td>{{ user_data.7|default:"N/A" }}</td>
-    <td><button onclick="editField('phone_number', '{{ user_data.7 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Contact Email</th>
-    <td>{{ user_data.8|default:"N/A" }}</td>
-    <td><button onclick="editField('contact_email', '{{ user_data.8 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Address</th>
-    <td>{{ user_data.9|default:"N/A" }}</td>
-    <td><button onclick="editField('address', '{{ user_data.9 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Class 10 Score</th>
-    <td>{{ user_data.10|default:"N/A" }}</td>
-    <td><button onclick="editField('class_10_score', '{{ user_data.10 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Class 12 Score</th>
-    <td>{{ user_data.11|default:"N/A" }}</td>
-    <td><button onclick="editField('class_12_score', '{{ user_data.11 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Graduation Score</th>
-    <td>{{ user_data.12|default:"N/A" }}</td>
-    <td><button onclick="editField('graduation_score', '{{ user_data.12 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Bank Account</th>
-    <td>{{ user_data.13|default:"N/A" }}</td>
-    <td><button onclick="editField('bank_account', '{{ user_data.13 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>IFSC Code</th>
-    <td>{{ user_data.14|default:"N/A" }}</td>
-    <td><button onclick="editField('ifsc_code', '{{ user_data.14 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Bank Name</th>
-    <td>{{ user_data.15|default:"N/A" }}</td>
-    <td><button onclick="editField('bank_name', '{{ user_data.15 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Parent Name</th>
-    <td>{{ user_data.16|default:"N/A" }}</td>
-    <td><button onclick="editField('parent_name', '{{ user_data.16 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Relationship</th>
-    <td>{{ user_data.17|default:"N/A" }}</td>
-    <td><button onclick="editField('relationship', '{{ user_data.17 }}')">Edit</button></td>
-  </tr>
-  <tr>
-    <th>Contact Number</th>
-    <td>{{ user_data.18|default:"N/A" }}</td>
-    <td><button onclick="editField('contact_number', '{{ user_data.18 }}')">Edit</button></td>
-  </tr>
-  {% if user.is_staff %}
-  <tr>
-    <th>User Type</th>
-    <td>{{ user.user_type }}</td>
-    <td><button onclick="editField('user_type', '{{ user.user_type }}')">Edit</button></td>
-  </tr>
-  {% endif %}
-</table>
-{% else %}
-<p>No profile information found.</p>
-{% endif %}
-
-<form id="edit-form" method="post" style="display: none;">
-  {% csrf_token %}
-  <input type="hidden" name="field" id="field">
-  <input type="text" name="value" id="value">
-  <button type="submit">Save</button>
+<form method="post" id="profile-form">
+    {% csrf_token %}
+    <table class="table table-bordered">
+        <tr>
+            <th>Username</th>
+            <td><input type="text" name="username" value="{{ user.username }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('username')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Email</th>
+            <td><input type="text" name="email" value="{{ user.email }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('email')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Name</th>
+            <td><input type="text" name="name" value="{{ form.name.value }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('name')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td>
+                <div class="input-group date" id="dateOfBirthPicker">
+                    <input type="text" name="date_of_birth" value="{{ form.date_of_birth.value }}" class="form-control" readonly>
+                    <span class="input-group-text"><i class="fas fa-calendar-alt" onclick="$('#dateOfBirthPicker').datepicker('show')"></i></span>
+                </div>
+            </td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('date_of_birth')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Gender</th>
+            <td><input type="text" name="gender" value="{{ form.gender.value }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('gender')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Admission Date</th>
+            <td>
+                <div class="input-group date" id="admissionDatePicker">
+                    <input type="text" name="admission_date" value="{{ form.admission_date.value }}" class="form-control" readonly>
+                    <span class="input-group-text"><i class="fas fa-calendar-alt" onclick="$('#admissionDatePicker').datepicker('show')"></i></span>
+                </div>
+            </td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('admission_date')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Phone Number</th>
+            <td><input type="text" name="contact_phone_number" value="{{ contact.phone_number }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('contact_phone_number')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Contact Email</th>
+            <td><input type="text" name="contact_email" value="{{ contact.email }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('contact_email')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td><input type="text" name="contact_address" value="{{ contact.address }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('contact_address')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Class 10 Score</th>
+            <td><input type="text" name="class_10_score" value="{{ academic.class_10_score }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('class_10_score')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Class 12 Score</th>
+            <td><input type="text" name="class_12_score" value="{{ academic.class_12_score }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('class_12_score')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Graduation Score</th>
+            <td><input type="text" name="graduation_score" value="{{ academic.graduation_score }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('graduation_score')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Bank Account</th>
+            <td><input type="text" name="bank_account" value="{{ bank.bank_account }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('bank_account')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>IFSC Code</th>
+            <td><input type="text" name="ifsc_code" value="{{ bank.ifsc_code }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('ifsc_code')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Bank Name</th>
+            <td><input type="text" name="bank_name" value="{{ bank.bank_name }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('bank_name')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Parent Name</th>
+            <td><input type="text" name="parent_name" value="{{ parent.parent_name }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('parent_name')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Relationship</th>
+            <td><input type="text" name="parent_relationship" value="{{ parent.relationship }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('parent_relationship')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Contact Number</th>
+            <td><input type="text" name="parent_contact_number" value="{{ parent.contact_number }}" class="form-control" readonly></td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('parent_contact_number')">Edit</button></td>
+        </tr>
+        <tr>
+            <th>Profile Picture</th>
+            <td>
+                <input type="file" name="profile_picture" class="form-control" readonly>
+                {% if student.profile_picture %}
+                <img src="{{ student.profile_picture }}" alt="Profile Picture" width="100">
+                {% endif %}
+            </td>
+            <td><button type="button" class="btn btn-secondary" onclick="editField('profile_picture')">Edit</button></td>
+        </tr>
+    </table>
+    <input type="hidden" name="field_name" id="field_name">
+    <input type="hidden" name="field_value" id="field_value">
+    <button type="submit" class="btn btn-primary" id="save-button" style="display: none;">Save</button>
 </form>
 
+<h2>User Activity Logs</h2>
+{% if user_activity_logs %}
+<table border="1">
+  <tr>
+    <th>Date</th>
+    <th>Activity</th>
+  </tr>
+  {% for log in user_activity_logs %}
+  <tr>
+    <td>{{ log.date }}</td>
+    <td>{{ log.activity }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>No activity logs found.</p>
+{% endif %}
+
 <script>
-function editField(field, value) {
-  document.getElementById('field').value = field;
-  document.getElementById('value').value = value;
-  document.getElementById('edit-form').style.display = 'block';
+function editField(field) {
+    const input = document.querySelector(`input[name="${field}"]`);
+    input.removeAttribute('readonly');
+    input.focus();
+    document.getElementById('field_name').value = field;
+    document.getElementById('save-button').style.display = 'block';
+    input.addEventListener('blur', function() {
+        document.getElementById('field_value').value = input.value;
+    });
 }
+
+$(document).ready(function () {
+    $('#dateOfBirthPicker').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true,
+    });
+    $('#admissionDatePicker').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true,
+    });
+});
 </script>
 
 {% include 'myapp/footer.html' %}

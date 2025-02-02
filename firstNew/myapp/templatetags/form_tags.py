@@ -9,3 +9,7 @@ def add_attrs(field, attrs):
         key, value = attr.split(':')
         field.field.widget.attrs[key] = value
     return field
+
+@register.filter(name='add_class')
+def add_class(field, css_class):
+    return field.as_widget(attrs={"class": css_class})
