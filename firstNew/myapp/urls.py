@@ -23,6 +23,7 @@ urlpatterns = [
     path('view_student/<int:student_id>/', views.view_student, name='view_student'),
     path('view_employee/<int:employee_id>/', views.view_employee, name='view_employee'),
     path('profile/', views.profile_view, name='profile'),
+    path('profile/', views.profile_view, name='profile_view'),
     path('', views.home_view, name='home'),
     path('employee_home/', views.home_view, name='employee_home'),
     path('login/', views.login_view, name='login'),

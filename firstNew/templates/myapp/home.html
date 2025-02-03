@@ -353,8 +353,21 @@
         const mainContent = document.getElementById("main-content");
         switch (page) {
           case "viewProfile":
-            mainContent.innerHTML =
-              "<h2>Your Profile</h2><p>Profile details go here...</p>";
+            fetch("{% url 'profile_view' %}")
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+              })
+              .then((data) => {
+                mainContent.innerHTML = data;
+              })
+              .catch((error) => {
+                console.error("Error loading View Profile page:", error);
+                mainContent.innerHTML =
+                  "<p>Error loading View Profile page. Please try again later.</p>";
+              });
             break;
           case "changePassword":
             fetch("{% url 'change_password' %}")

@@ -73,17 +73,17 @@
           <div class="form-group">
             <label for="name">Name:</label>
             {{ form.name.errors }}
-            {{ form.name }}
+            {{ form.name|add_attrs:"readonly:readonly" }}
           </div>
           <div class="form-group">
             <label for="date_of_birth">Date of Birth:</label>
             {{ form.date_of_birth.errors }}
-            {{ form.date_of_birth }}
+            {{ form.date_of_birth|add_attrs:"readonly:readonly" }}
           </div>
           <div class="form-group">
             <label for="gender">Gender:</label>
             {{ form.gender.errors }}
-            {{ form.gender }}
+            {{ form.gender|add_attrs:"readonly:readonly" }}
           </div>
           <div class="form-group">
             <label for="admission_date">Admission Date:</label>
