@@ -200,6 +200,57 @@
         alert("Student registration successful!");
         location.reload();
       }
+
+      function handleFormSubmission(formId, successMessage) {
+        document.querySelector(`#${formId}`).addEventListener('submit', function(event) {
+          event.preventDefault();
+          var form = event.target;
+          var formData = new FormData(form);
+          var submitButton = document.getElementById('submit-button');
+          var loadingSpinner = document.getElementById('loading-spinner');
+          var formErrors = document.getElementById('form-errors');
+          submitButton.disabled = true;
+          loadingSpinner.style.display = 'inline-block';
+          fetch(form.action, {
+            method: form.method,
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          }).then(response => {
+            submitButton.disabled = false;
+            loadingSpinner.style.display = 'none';
+            if (response.ok) {
+              const successMessageElement = document.createElement('div');
+              successMessageElement.id = 'success-message';
+              successMessageElement.style.color = 'green';
+              successMessageElement.style.textAlign = 'center';
+              successMessageElement.style.marginTop = '20px';
+              successMessageElement.textContent = successMessage;
+              form.parentNode.insertBefore(successMessageElement, form);
+              form.reset();
+              formErrors.style.display = 'none';
+              setTimeout(() => {
+                successMessageElement.style.display = 'none';
+              }, 2000); // Adjust the timeout duration as needed
+            } else if (response.status === 409) {
+              alert('This entry already exists. Please check the details and try again.');
+            } else if (response.status === 400) {
+              response.json().then(data => {
+                formErrors.innerHTML = data.errors.join('<br>');
+                formErrors.style.display = 'block';
+              });
+            } else {
+              alert('There was an error with the registration. Please try again.');
+            }
+          }).catch(error => {
+            submitButton.disabled = false;
+            loadingSpinner.style.display = 'none';
+            console.error('Error:', error);
+            alert('There was an error with the registration. Please try again.');
+          });
+        });
+      }
     </script>
   </head>
   <body>
@@ -207,10 +258,14 @@
     <div class="main-container">
       <div class="form-container">
         <h2>Register Student</h2>
+        <div id="form-errors" style="display: none; color: red; text-align: center; margin-top: 20px;"></div>
         <form method="post" action="{% url 'admin_register_student' %}" id="register-student-form">
           {% csrf_token %}
           {{ form.as_p }}
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="submit" class="btn btn-primary" id="submit-button">
+            Submit
+            <span id="loading-spinner" class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+          </button>
         </form>
         <div id="success-message" style="display: none; color: green; text-align: center; margin-top: 20px;">
           Student registration successful!
@@ -221,75 +276,7 @@
     <p>You do not have permission to view this page.</p>
     {% endif %}
     <script>
-      document
-        .getElementById("id_university")
-        .addEventListener("change", function () {
-          updateInstitutes();
-        });
-      document
-        .getElementById("id_institute")
-        .addEventListener("change", function () {
-          updatePrograms();
-        });
-      document
-        .getElementById("id_program")
-        .addEventListener("change", updateBranches);
-
-      $(document).ready(function () {
-        $("#dateOfBirthPicker").datepicker({
-          format: "yyyy-mm-dd",
-          autoclose: true,
-          todayHighlight: true,
-        });
-        $("#admissionDatePicker").datepicker({
-          format: "yyyy-mm-dd",
-          autoclose: true,
-          todayHighlight: true,
-        });
-
-        // Trigger datepicker on calendar icon click
-        $("#dateOfBirthPicker .input-group-text").click(function () {
-          $("#dateOfBirthPicker input").focus();
-        });
-        $("#admissionDatePicker .input-group-text").click(function () {
-          $("#admissionDatePicker input").focus();
-        });
-      });
-
-      document.querySelector('#register-student-form').addEventListener('submit', function(event) {
-        event.preventDefault();
-        var form = event.target;
-        var formData = new FormData(form);
-        fetch(form.action, {
-          method: form.method,
-          body: formData,
-          headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-          }
-        }).then(response => {
-          if (response.ok) {
-            document.getElementById('success-message').style.display = 'block';
-            form.reset();
-            setTimeout(() => {
-              location.reload(); // Reload the page after showing the success message
-            }, 2000); // Adjust the timeout duration as needed
-          } else {
-            alert('There was an error with the registration. Please try again.');
-          }
-        }).catch(error => {
-          console.error('Error:', error);
-          alert('There was an error with the registration. Please try again.');
-        });
-      });
-    </script>
-    <script>
-      function refreshCurrentPage() {
-        location.reload();
-      }
-
-      function loadHomePage() {
-        window.location.href = "{% url 'home' %}";
-      }
+      handleFormSubmission('register-student-form', 'Student registration successful!');
     </script>
   </body>
 </html>
