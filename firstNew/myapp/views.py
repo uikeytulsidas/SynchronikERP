@@ -4,7 +4,7 @@ from django.contrib.auth.forms import PasswordChangeForm, AuthenticationForm
 from django.contrib.auth.views import PasswordResetView
 from django.core.mail import send_mail
 from django.db import connection, IntegrityError, transaction
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseBadRequest
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.utils.crypto import get_random_string
@@ -841,6 +841,8 @@ def admin_register_student(request):
                 messages.error(request, "An unexpected error occurred. Please try again.")
         else:
             logger.error(f"Form errors: {form.errors}")
+            if request.is_ajax():
+                return JsonResponse({'errors': form.errors.as_json()}, status=400)
             messages.error(request, "Please correct the errors in the form.")
     else:
         form = StudentRegistrationForm()
@@ -957,6 +959,8 @@ def admin_register_employee(request):
                 messages.error(request, "An unexpected error occurred. Please try again.")
         else:
             logger.error(f"Form errors: {form.errors}")
+            if request.is_ajax():
+                return JsonResponse({'errors': form.errors.as_json()}, status=400)
             messages.error(request, "Please correct the errors in the form.")
     else:
         form = EmployeeRegistrationForm()

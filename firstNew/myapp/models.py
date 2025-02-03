@@ -86,7 +86,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('admin', 'Admin'),
         ('other', 'Other'),
     )
-    user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='student')
+    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES, default='student')
 
     # Related fields for Django's permissions system
     groups = models.ManyToManyField(
@@ -141,9 +141,9 @@ class University(models.Model):
     estd_year = models.IntegerField(null=True, blank=True)
     status = models.CharField(max_length=8, choices=[('Active', 'Active'), ('Inactive', 'Inactive')], default='Active')
     uni_code = models.CharField(max_length=50, null=True, blank=True)
-    affil_status = models.CharField(max_length=10, choices=[('Affiliated', 'Affiliated'), ('Autonomous', 'Autonomous')], default='Affiliated')
+    affil_status = models.CharField(max_length=20, choices=[('Affiliated', 'Affiliated'), ('Autonomous', 'Autonomous')], default='Affiliated')
     accred_details = models.CharField(max_length=255, null=True, blank=True)
-    uni_type = models.CharField(max_length=7, choices=[('Public', 'Public'), ('Private', 'Private'), ('Deemed', 'Deemed')], default='Public')
+    uni_type = models.CharField(max_length=20, choices=[('Public', 'Public'), ('Private', 'Private'), ('Deemed', 'Deemed')], default='Public')
     addl_contact_no = models.CharField(max_length=15, null=True, blank=True)
     email = models.EmailField(null=True, blank=True)
     chancellor_name = models.CharField(max_length=255, null=True, blank=True)
@@ -216,7 +216,7 @@ class Program(models.Model):
     duration = models.IntegerField()
     level = models.CharField(max_length=50)
     type = models.CharField(max_length=50)
-    affil_status = models.CharField(max_length=10, choices=[('Affiliated', 'Affiliated'), ('Autonomous', 'Autonomous')], default='Affiliated')
+    affil_status = models.CharField(max_length=20, choices=[('Affiliated', 'Affiliated'), ('Autonomous', 'Autonomous')], default='Affiliated')
     intake_capacity = models.IntegerField()
     program_outcome = models.TextField()
     entry_person = models.CharField(max_length=255, null=True, blank=True)
@@ -307,7 +307,7 @@ class Semester(models.Model):
     semester_number = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
-    sem_type = models.CharField(max_length=10)
+    sem_type = models.CharField(max_length=20)
     entry_person = models.CharField(max_length=100, null=True, blank=True)
     entry_date = models.DateField(default=timezone.now)
     edit_person = models.CharField(max_length=100, null=True, blank=True)
@@ -419,12 +419,12 @@ class masterEmployee(models.Model):
 
     id = models.AutoField(primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='employee')
-    employee_id = models.CharField(max_length=20, unique=True)
+    employee_id = models.CharField(max_length=100, unique=True)
     name = models.CharField(max_length=100)
     date_of_birth = models.DateField(null=True, blank=True)  # Allow null values
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)  # Corrected max_length
     hire_date = models.DateField()
-    employee_type = models.CharField(max_length=50, default='admin')
+    employee_type = models.CharField(max_length=100, default='admin')  # Ensure max_length is sufficient
     university = models.ForeignKey(University, on_delete=models.CASCADE)
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
     department = models.CharField(max_length=100, default='General')  # Added department field with default value
