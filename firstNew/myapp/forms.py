@@ -92,13 +92,11 @@ class StudentInfoForm(forms.ModelForm):
             except StudentBank.DoesNotExist:
                 pass
 
-            try:
-                parent = self.instance.parents.first()
+            parent = self.instance.parents.first()
+            if parent:
                 self.fields['parent_name'].initial = parent.parent_name
                 self.fields['parent_relationship'].initial = parent.relationship
                 self.fields['parent_contact_number'].initial = parent.contact_number
-            except StudentParent.DoesNotExist:
-                pass
 
     def make_fields_editable(self, fields):
         for field in fields:
@@ -151,7 +149,7 @@ class EmployeeInfoForm(forms.ModelForm):
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty queryset
         elif self.instance.pk:
-            self.fields['institute'].queryset = self.instance.university.institute_set.order_by('name')
+            self.fields['institute'].queryset = self.instance.university.institutes.order_by('name')
 
         if 'institute' in self.data:
             try:
@@ -160,7 +158,7 @@ class EmployeeInfoForm(forms.ModelForm):
                 print(f"Filtered programs for institute_id {institute_id}")  # Debug log
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty queryset
-        elif self.instance.pk:
+        elif self.instance.pk and hasattr(self.instance, 'institute'):
             self.fields['program'].queryset = Program.objects.filter(institute=self.instance.institute).order_by('name')
 
         if 'program' in self.data:
@@ -170,14 +168,16 @@ class EmployeeInfoForm(forms.ModelForm):
                 print(f"Filtered branches for program_id {program_id}")  # Debug log
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty queryset
-        elif self.instance.pk:
+        elif self.instance.pk and hasattr(self.instance, 'program'):
             self.fields['branch'].queryset = Branch.objects.filter(program=self.instance.program).order_by('name')
 
         # Set initial values if instance exists
         if self.instance.pk:
             self.fields['institute'].queryset = Institute.objects.filter(university=self.instance.university).order_by('name')
-            self.fields['program'].queryset = Program.objects.filter(institute=self.instance.institute). order_by('name')
-            self.fields['branch'].queryset = Branch.objects.filter(program=self.instance.program).order_by('name')
+            if hasattr(self.instance, 'institute'):
+                self.fields['program'].queryset = Program.objects.filter(institute=self.instance.institute).order_by('name')
+            if hasattr(self.instance, 'program'):
+                self.fields['branch'].queryset = Branch.objects.filter(program=self.instance.program).order_by('name')
 
     def clean(self):
         cleaned_data = super().clean()

@@ -173,19 +173,19 @@
         {% if form.full_name %}
         <label for="full_name">Full Name:</label>
         {{ form.full_name.errors }}
-        {{ form.full_name }}
+        {{ form.full_name|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.date_of_birth %}
         <label for="date_of_birth">Date of Birth:</label>
         {{ form.date_of_birth.errors }}
-        {{ form.date_of_birth|add_attrs:"placeholder:YYYY-MM-DD" }}
+        {{ form.date_of_birth|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.gender %}
         <label for="gender">Gender:</label>
         {{ form.gender.errors }}
-        {{ form.gender }}
+        {{ form.gender|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.contact_number %}
@@ -231,43 +231,43 @@
         {% if form.employee_id %}
         <label for="employee_id">Employee ID:</label>
         {{ form.employee_id.errors }}
-        {{ form.employee_id }}
+        {{ form.employee_id|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.joining_date %}
         <label for="joining_date">Joining Date:</label>
         {{ form.joining_date.errors }}
-        {{ form.joining_date|add_attrs:"placeholder:YYYY-MM-DD" }}
+        {{ form.joining_date|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.hire_date %}
         <label for="hire_date">Hire Date:</label>
         {{ form.hire_date.errors }}
-        {{ form.hire_date|add_attrs:"placeholder:YYYY-MM-DD" }}
+        {{ form.hire_date|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.university %}
         <label for="university">University:</label>
         {{ form.university.errors }}
-        {{ form.university }}
+        {{ form.university|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.institute %}
         <label for="institute">Institute:</label>
         {{ form.institute.errors }}
-        {{ form.institute }}
+        {{ form.institute|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.program %}
         <label for="program">Program:</label>
         {{ form.program.errors }}
-        {{ form.program }}
+        {{ form.program|add_attrs:"readonly:readonly" }}
         {% endif %}
 
         {% if form.branch %}
         <label for="branch">Branch:</label>
         {{ form.branch.errors }}
-        {{ form.branch }}
+        {{ form.branch|add_attrs:"readonly:readonly" }}
         {% endif %}
       </fieldset>
 

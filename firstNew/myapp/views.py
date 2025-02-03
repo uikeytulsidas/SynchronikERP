@@ -36,7 +36,12 @@ def change_password_view(request):
             new_password = form.cleaned_data.get('new_password1')
             if validate_password_strength(new_password):
                 form.save()
+                update_session_auth_hash(request, form.user)  # Keep the user logged in after password change
                 messages.success(request, "Your password has been updated successfully.")
+                if request.user.user_type == 'student':
+                    return redirect('student_info_form')
+                elif request.user.user_type == 'teacher':
+                    return redirect('employee_info_form')
             else:
                 messages.error(request, "Password does not meet the required strength criteria.")
         else:
@@ -556,8 +561,6 @@ def employee_info_form_view(request):
     """
     Display and handle the employee information form.
     """
-    is_admin = request.user.is_staff
-
     if request.method == 'POST':
         form = EmployeeInfoForm(request.POST, request.FILES)
         if form.is_valid():
@@ -628,7 +631,7 @@ def employee_info_form_view(request):
     else:
         form = EmployeeInfoForm()
 
-    return render(request, 'myapp/employee_info_form.html', {'form': form, 'is_admin': is_admin})
+    return render(request, 'myapp/employee_info_form.html', {'form': form})
 
 @login_required
 @user_passes_test(lambda u: u.user_type == 'admin')
@@ -676,6 +679,7 @@ def view_employee(request, employee_id):
 def profile_view(request):
     user = request.user
     student = None
+    employee = None
     contact = None
     academic = None
     bank = None
@@ -701,28 +705,50 @@ def profile_view(request):
             parent = None
 
         if request.method == 'POST':
-            field_name = request.POST.get('field_name')
-            field_value = request.POST.get('field_value')
-            if field_name and field_value:
-                if field_name in ['contact_phone_number', 'contact_email', 'contact_address']:
-                    setattr(contact, field_name.split('_')[1], field_value)
-                    contact.save()
-                elif field_name in ['class_10_score', 'class_12_score', 'graduation_score']:
-                    setattr(academic, field_name, field_value)
-                    academic.save()
-                elif field_name in ['bank_account', 'ifsc_code', 'bank_name']:
-                    setattr(bank, field_name, field_value)
-                    bank.save()
-                elif field_name in ['parent_name', 'parent_relationship', 'parent_contact_number']:
-                    setattr(parent, field_name.split('_')[1], field_value)
-                    parent.save()
-                else:
-                    setattr(student, field_name, field_value)
-                    student.save()
-                messages.success(request, f"{field_name.replace('_', ' ').title()} updated successfully!")
-                return redirect('profile')
+            form = StudentInfoForm(request.POST, instance=student)
+            if form.is_valid():
+                student = form.save(commit=False)
+                student.user = request.user
+                student.save()
 
-        form = StudentInfoForm(instance=student)
+                StudentContact.objects.update_or_create(
+                    student=student,
+                    defaults={
+                        'phone_number': form.cleaned_data['contact_phone_number'],
+                        'email': form.cleaned_data['contact_email'],
+                        'address': form.cleaned_data['contact_address'],
+                    }
+                )
+                StudentAcademic.objects.update_or_create(
+                    student=student,
+                    defaults={
+                        'class_10_score': form.cleaned_data['class_10_score'],
+                        'class_12_score': form.cleaned_data['class_12_score'],
+                        'graduation_score': form.cleaned_data['graduation_score'],
+                    }
+                )
+                StudentBank.objects.update_or_create(
+                    student=student,
+                    defaults={
+                        'bank_account': form.cleaned_data['bank_account'],
+                        'ifsc_code': form.cleaned_data['ifsc_code'],
+                        'bank_name': form.cleaned_data['bank_name'],
+                    }
+                )
+                StudentParent.objects.update_or_create(
+                    student=student,
+                    defaults={
+                        'parent_name': form.cleaned_data['parent_name'],
+                        'relationship': form.cleaned_data['parent_relationship'],
+                        'contact_number': form.cleaned_data['parent_contact_number'],
+                    }
+                )
+
+                messages.success(request, "Your information has been updated successfully!")
+                return redirect('profile')
+        else:
+            form = StudentInfoForm(instance=student)
+
         return render(request, 'myapp/profile.html', {
             'form': form,
             'student': student,
@@ -730,6 +756,70 @@ def profile_view(request):
             'academic': academic,
             'bank': bank,
             'parent': parent
+        })
+
+    elif user.user_type in ['teacher', 'admin']:
+        try:
+            employee = masterEmployee.objects.get(user=user)
+            contact = EmployeeContact.objects.get(employee=employee)
+            academic = EmployeeAcademic.objects.get(employee=employee)
+            bank = EmployeeBank.objects.get(employee=employee)
+        except masterEmployee.DoesNotExist:
+            messages.error(request, "Employee record not found.")
+            return redirect('home')
+        except EmployeeContact.DoesNotExist:
+            contact = None
+        except EmployeeAcademic.DoesNotExist:
+            academic = None
+        except EmployeeBank.DoesNotExist:
+            bank = None
+
+        if request.method == 'POST':
+            form = EmployeeInfoForm(request.POST, instance=employee)
+            if form.is_valid():
+                employee = form.save(commit=False)
+                employee.user = request.user
+                employee.user_id = request.user.id  # Correctly set the user_id to the numeric ID
+                employee.save()
+
+                EmployeeContact.objects.update_or_create(
+                    employee=employee,
+                    defaults={
+                        'phone_number': form.cleaned_data['contact_number'],
+                        'email': form.cleaned_data['email_address'],
+                        'address': form.cleaned_data['address'],
+                    }
+                )
+
+                EmployeeAcademic.objects.update_or_create(
+                    employee=employee,
+                    defaults={
+                        'highest_degree': form.cleaned_data['highest_degree'],
+                        'institution': form.cleaned_data['institution'],
+                        'year_of_passing': form.cleaned_data['year_of_passing'],
+                    }
+                )
+
+                EmployeeBank.objects.update_or_create(
+                    employee=employee,
+                    defaults={
+                        'bank_account': form.cleaned_data['bank_account'],
+                        'ifsc_code': form.cleaned_data['ifsc_code'],
+                        'bank_name': form.cleaned_data['bank_name'],
+                    }
+                )
+
+                messages.success(request, "Your information has been updated successfully!")
+                return redirect('profile')
+        else:
+            form = EmployeeInfoForm(instance=employee)
+
+        return render(request, 'myapp/profile.html', {
+            'form': form,
+            'employee': employee,
+            'contact': contact,
+            'academic': academic,
+            'bank': bank
         })
 
     return redirect('home')
