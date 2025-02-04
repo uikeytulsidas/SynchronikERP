@@ -1,0 +1,67 @@
+
+.main-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 20px auto;
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    top: -20px; /* Adjust this value to shift upwards */
+    }
+    .form-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: bold;
+    font-size: 24px;
+    color: #004080;
+    }
+    .form-group {
+    margin-bottom: 20px; /* Reduced spacing between fields */
+    }
+    .form-group label {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+    display: block;
+    }
+    .form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-size: 16px;
+    transition: 0.3s ease-in-out;
+    }
+    .input-group .form-control {
+    border-radius: 0 8px 8px 0;
+    }
+    .input-group .input-group-text {
+    border-radius: 8px 0 0 8px;
+    }
+    .btn-primary {
+    background-color: #004080;
+    border: none;
+    color: #ffffff;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 18px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 100%;
+    margin-top: 20px;
+    display: block;
+    text-align: center;
+    }
+    .btn-primary:hover {
+    background-color: #063564;
+    transform: scale(1.05);
+    }
+    .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    }
+    .col-md-3 {
+    flex: 1;
+    min-width: 220px;
+    }
