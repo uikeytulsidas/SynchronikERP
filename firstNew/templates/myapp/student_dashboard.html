@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        /* Basic styling */
+        .section {
+            display: none;  /* Hide all sections by default */
+        }
+        .section.active {
+            display: block;  /* Show active section */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Dashboard</h1>
+
+    <!-- Buttons to toggle sections -->
+    <button onclick="showSection('student_dashboard')">Student Dashboard</button>
+    <button onclick="showSection('overview')">Overview</button>
+    <button onclick="showSection('settings')">Settings</button>
+
+    <!-- Sections that will be dynamically displayed -->
+    <div id="student_dashboard" class="section">
+        <h2>Student Dashboard</h2>
+        <p>Welcome to your dashboard! Here are your courses, assignments, and more.</p>
+        <!-- You can add more dynamic content here -->
+    </div>
+
+    <div id="overview" class="section">
+        <h2>Overview</h2>
+        <p>This is your general overview. You can see a summary of your profile here.</p>
+    </div>
+
+    <div id="settings" class="section">
+        <h2>Settings</h2>
+        <p>Change your account settings and preferences here.</p>
+    </div>
+
+    <script>
+        // Function to show the selected section and hide others
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => section.classList.remove('active'));
+
+            // Show the selected section
+            const selectedSection = document.getElementById(sectionId);
+            selectedSection.classList.add('active');
+        }
+
+        // Initially, you might want to show the first section
+        showSection('student_dashboard');  // Show student dashboard by default
+    </script>
+</body>
+</html>

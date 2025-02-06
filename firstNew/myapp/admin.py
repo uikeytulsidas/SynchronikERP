@@ -10,7 +10,6 @@ import random
 import string
 
 from .models import User, masterStudent, StudentContact, StudentAcademic, StudentBank, StudentParent, masterEmployee, EmployeeContact, EmployeeAcademic, EmployeeBank, Institute, Program, Branch
-from .views import admin_register_student, admin_register_employee
 
 # Custom admin page
 class CustomAdminSite(admin.AdminSite):
@@ -20,15 +19,13 @@ class CustomAdminSite(admin.AdminSite):
     def get_urls(self):
         urls = super().get_urls()
         custom_urls = [
-            path('register_student/', self.admin_view(admin_register_student), name='admin_register_student'),
-            path('register_employee/', self.admin_view(admin_register_employee), name='admin_register_employee'),
+            # Remove the custom URLs for admin_register_student and admin_register_employee
         ]
         return custom_urls + urls
 
     def index(self, request, extra_context=None):
         extra_context = extra_context or {}
-        extra_context['admin_register_student_link'] = format_html('<a href="{}">Register New Student</a>', self.get_url('admin_register_student'))
-        extra_context['admin_register_employee_link'] = format_html('<a href="{}">Register New Employee</a>', self.get_url('admin_register_employee'))
+        # Remove the extra context for admin_register_student_link and admin_register_employee_link
         return super().index(request, extra_context)
 
 # Instantiate your custom admin site

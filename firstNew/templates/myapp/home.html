@@ -3,226 +3,687 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home</title>
+    <title>College Software Master Page</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        overflow: hidden;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #004080;
+        color: white;
+        padding: 10px 20px;
+        height: 50px;
+        position: fixed;
+        top: 0;
+        left: 50px; /* Adjust this dynamically with JavaScript */
+        width: calc(100% - 50px); /* Adjust this dynamically */
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: left 0.3s ease, width 0.3s ease;
+      }
+
+      .header .left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .header .left i {
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+
+      .header .left h1 {
+        margin: 0;
+        font-size: 1.5rem;
+      }
+
+      .header .right {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+
+      .header .right i {
+        cursor: pointer;
+        font-size: 1.2rem;
+      }
+
+      /* Profile Icon Styling */
+      .profile-icon {
+        width: 40px; /* Set size of the profile icon */
+        height: 40px;
+        border-radius: 50%; /* Makes the profile photo round */
+        object-fit: cover; /* Ensures the photo fits the circle */
+      }
+      .user-name {
+        font-size: 1rem;
+        color: white;
+        margin-right: 10px;
+      }
+
+      .profile-dropdown {
+        position: absolute;
+        top: 50px;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        display: none;
+        flex-direction: column;
+        width: 200px;
+      }
+
+      .profile-dropdown a {
+        text-decoration: none;
+        color: #333;
+        padding: 10px;
+        border-bottom: 1px solid #f1f1f1;
+        display: block;
+        font-size: 14px;
+      }
+      .profile-dropdown a i {
+        font-size: 15px !important; /* Adjust icon size */
+        width: 20px; /* Ensures uniform width for all icons */
+        text-align: center;
+        color: #25272a; /* Matching icon color with the theme */
+      }
+
+      .profile-dropdown a:hover {
+        background-color: #f8f9fa;
+      }
+
+      .profile-dropdown a:last-child {
+        border-bottom: none;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 50px; /* Sidebar width */
+        height: 100%;
+        background-color: #f8f9fa;
+        padding: 10px 20px 30px 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+        z-index: 500;
+        display: flex;
+        flex-direction: column;
+      }
+      /* Add styling for the company logo */
+      .sidebar .company-logo {
+        width: 40px; /* Adjust logo width */
+        height: 40px; /* Adjust logo height */
+        margin-bottom: 20px; /* Spacing below the logo */
+        align-self: center; /* Center the logo */
+      }
+
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .sidebar ul li {
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .sidebar ul li a {
+        text-decoration: none;
+        color: #333;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        text-overflow: ellipsis;
+        margin: 0;
+        transition: color 0.3s ease;
+      }
+
+      .sidebar ul li a i {
+        font-size: 1.2rem;
+        margin-right: 10px;
+      }
+
+      .sidebar ul li a:hover {
+        color: #007bff;
+      }
+
+      .sidebar ul li a .menu-label {
+        display: none;
+        font-size: 1rem;
+        margin-left: 10px; /* Adjusted margin to align label to the left */
+        opacity: 0;
+        text-align: left; /* Ensure the text is left-aligned */
+        transition: opacity 0.3s, margin-left 0.5s;
+      }
+
+      .sidebar ul li:hover a .menu-label {
+        display: inline-block;
+        opacity: 1;
+        margin-left: 10px; /* Adjusted margin to align label to the left */
+      }
+
+      .content {
+        margin-left: 100px; /* Adjust this dynamically */
+        padding: 20px;
+        padding-top: 80px;
+        transition: margin-left 0.3s ease;
+      }
+
+      .content.fullwidth {
+        margin-left: 0;
+      }
+
+      footer {
+        background-color: #004080;
+        color: white;
+        text-align: center;
+        padding: 1px;
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 30px;
+      }
+
+      .btn-container {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      #register-options {
+        padding-left: 20px; /* Adjusted padding to move options more to the left */
+      }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
   </head>
   <body>
-    {% include 'myapp/header.html' %}
-
-    <h1>Welcome to the Home Page</h1>
-
-    <nav>
-      {% if user.is_authenticated %}
-      <a href="{% url 'profile' %}">Profile</a>
-      {% if user.is_staff or user.user_type == 'admin' %}
-      <div>
-        <a href="{% url 'admin_register_student' %}">Register Student</a>
-        <a href="{% url 'admin_register_employee' %}">Register Employee</a>
+    <div class="header">
+      <div class="left">
+        <h1 onclick="loadHomePage()">College Name</h1> <!-- Load homepage on click -->
       </div>
-      {% endif %}
-      {% else %}
-      <div style="float: right">
-        <a href="{% url 'login' %}">Login</a>
-        <a href="{% url 'register' %}">Register</a>
+      <div class="right">
+        <i class="fas fa-bell" title="Notifications"></i>
+        <i class="fas fa-sync-alt" title="Refresh" onclick="refreshCurrentPage()"></i> <!-- Refresh button -->
+        <img
+          id="profile-photo"
+          class="profile-icon"
+          src="default-profile-photo.jpg"
+          alt="Profile"
+          title="Profile"
+        />
+        <span class="user-name" id="user-name">{{ user.username }}</span>
+        <div class="profile-dropdown" id="profile-dropdown">
+          <a href="#" onclick="loadPage('viewProfile')">
+            <i class="fas fa-user"></i> View Profile
+          </a>
+          <a href="#" onclick="loadPage('changePassword')">
+            <i class="fas fa-key"></i> Change Password
+          </a>
+          <a href="{% url 'logout' %}">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </a>
+        </div>
       </div>
-      {% endif %}
-    </nav>
+    </div>
 
-    {% if user.is_authenticated %}
-    {% if user.user_type == 'admin' %}
-    <h2>All Students</h2>
-    <table border="1">
-      <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Name</th>
-        <th>Actions</th>
-      </tr>
-      {% for student in students %}
-      <tr>
-        <td>{{ student.0 }}</td>
-        <td>{{ student.1 }}</td>
-        <td>{{ student.2 }}</td>
-        <td><a href="{% url 'view_student' student.0 %}">View</a></td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="sidebar">
+      <div class="company-name"></div>
+      <img src="company-logo.png" alt="Company Logo" class="company-logo" />
+      <ul>
+        {% if user.is_staff %}
+          {% if user.user_type == 'admin' %}
+          <li>
+            <a href="#" onclick="toggleRegisterOptions()">
+              <i class="fas fa-user-plus"></i>
+              <span class="menu-label">Register</span>
+            </a>
+            <ul id="register-options" style="display: none;">
+              <li><a href="#" onclick="loadPage('adminRegisterStudent')"><i class="fas fa-user-graduate"></i><span class="menu-label">Register Student</span></a></li>
+              <li><a href="#" onclick="loadPage('adminRegisterEmployee')"><i class="fas fa-briefcase"></i><span class="menu-label">Register Employee</span></a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li>
+            <a href="#" onclick="loadPage('studentList')">
+              <i class="fas fa-users"></i>
+              <span class="menu-label">Student List</span>
+            </a>
+          </li>
+          {% endif %}
+        {% endif %}
+        <li><a href="#"><i class="fas fa-tachometer-alt"></i><span class="menu-label">Dashboard</span></a></li>
+        {% if user.user_type == 'student' %}
+        <li><a href="#"><i class="fas fa-user-graduate"></i><span class="menu-label">Admissions</span></a></li>
+        <li><a href="#"><i class="fas fa-book"></i><span class="menu-label">Library</span></a></li>
+        <li><a href="#"><i class="fas fa-users"></i><span class="menu-label">Student Section</span></a></li>
+        {% elif user.user_type == 'teacher' %}
+        <li><a href="#"><i class="fas fa-chalkboard-teacher"></i><span class="menu-label">Academic Monitor</span></a></li>
+        <li><a href="#"><i class="fas fa-calendar-day"></i><span class="menu-label">Events</span></a></li>
+        <li><a href="#"><i class="fas fa-book-open"></i><span class="menu-label">Exam Section</span></a></li>
+        {% elif user.user_type == 'admin' %}
+        <li><a href="#"><i class="fas fa-calculator"></i><span class="menu-label">Accounts</span></a></li>
+        <li><a href="#"><i class="fas fa-check-circle"></i><span class="menu-label">Clearance</span></a></li>
+        <li><a href="#"><i class="fas fa-users"></i><span class="menu-label">Committees</span></a></li>
+        <li><a href="#"><i class="fas fa-building"></i><span class="menu-label">Establishment</span></a></li>
+        <li><a href="#"><i class="fas fa-comment-dots"></i><span class="menu-label">Feedback</span></a></li>
+        <li><a href="#"><i class="fas fa-credit-card"></i><span class="menu-label">Fees</span></a></li>
+        <li><a href="#"><i class="fas fa-door-open"></i><span class="menu-label">Front Office</span></a></li>
+        <li><a href="#"><i class="fas fa-home"></i><span class="menu-label">Hostel</span></a></li>
+        <li><a href="#"><i class="fas fa-inbox"></i><span class="menu-label">Inward/Outward Doc</span></a></li>
+        <li><a href="#"><i class="fas fa-user-clock"></i><span class="menu-label">Leave Management</span></a></li>
+        <li><a href="#"><i class="fas fa-briefcase"></i><span class="menu-label">Training & Placement</span></a></li>
+        <li><a href="#" onclick="loadUserManagementPage()"><i class="fas fa-user-cog"></i><span class="menu-label">User Management</span></a></li>
+        {% endif %}
+      </ul>
+    </div>
 
-    <h2>All Employees</h2>
-    <table border="1">
-      <tr>
-        <th>Username</th>
-        <th>Email</th>
-        <th>Name</th>
-        <th>Actions</th>
-      </tr>
-      {% for employee in employees %}
-      <tr>
-        <td>{{ employee.0 }}</td>
-        <td>{{ employee.1 }}</td>
-        <td>{{ employee.2 }}</td>
-        <td><a href="{% url 'view_employee' employee.0 %}">View</a></td>
-      </tr>
-      {% endfor %}
-    </table>
-    {% elif user.user_type == 'student' %}
-    <h2>Your Profile</h2>
-    {% if user_data %}
-    <table border="1">
-      <tr>
-        <th>Username</th>
-        <td>{{ user_data.1 }}</td>
-      </tr>
-      <tr>
-        <th>Email</th>
-        <td>{{ user_data.2 }}</td>
-      </tr>
-      <tr>
-        <th>Name</th>
-        <td>{{ user_data.3|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Date of Birth</th>
-        <td>{{ user_data.4|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Gender</th>
-        <td>{{ user_data.5|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Admission Date</th>
-        <td>{{ user_data.6|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Phone Number</th>
-        <td>{{ user_data.7|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Contact Email</th>
-        <td>{{ user_data.8|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Address</th>
-        <td>{{ user_data.9|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Class 10 Score</th>
-        <td>{{ user_data.10|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Class 12 Score</th>
-        <td>{{ user_data.11|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Graduation Score</th>
-        <td>{{ user_data.12|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Bank Account</th>
-        <td>{{ user_data.13|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>IFSC Code</th>
-        <td>{{ user_data.14|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Bank Name</th>
-        <td>{{ user_data.15|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Parent Name</th>
-        <td>{{ user_data.16|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Relationship</th>
-        <td>{{ user_data.17|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Contact Number</th>
-        <td>{{ user_data.18|default:"N/A" }}</td>
-      </tr>
-    </table>
-    {% else %}
-    <p>No profile information found.</p>
-    {% endif %}
-    {% elif user.user_type == 'teacher' %}
-    <h2>Your Profile</h2>
-    {% if user_data %}
-    <table border="1">
-      <tr>
-        <th>Username</th>
-        <td>{{ user_data.1 }}</td>
-      </tr>
-      <tr>
-        <th>Email</th>
-        <td>{{ user_data.2 }}</td>
-      </tr>
-      <tr>
-        <th>Name</th>
-        <td>{{ user_data.3|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Date of Birth</th>
-        <td>{{ user_data.4|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Gender</th>
-        <td>{{ user_data.5|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Hire Date</th>
-        <td>{{ user_data.6|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Phone Number</th>
-        <td>{{ user_data.7|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Contact Email</th>
-        <td>{{ user_data.8|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Address</th>
-        <td>{{ user_data.9|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Highest Degree</th>
-        <td>{{ user_data.10|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Institution</th>
-        <td>{{ user_data.11|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Year of Passing</th>
-        <td>{{ user_data.12|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Bank Account</th>
-        <td>{{ user_data.13|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>IFSC Code</th>
-        <td>{{ user_data.14|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Bank Name</th>
-        <td>{{ user_data.15|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Department</th>
-        <td>{{ user_data.16|default:"N/A" }}</td>
-      </tr>
-      <tr>
-        <th>Subject</th>
-        <td>{{ user_data.17|default:"N/A" }}</td>
-      </tr>
-    </table>
-    {% else %}
-    <p>No profile information found.</p>
-    {% endif %}
-    {% endif %}
-    {% endif %}
+    <div class="content" id="main-content">
+      {% block content %}
+      <div class="main-container">
+        <div class="form-container">
+          <h2>Welcome to the College Software</h2>
+          <p>Select an option from the sidebar to navigate through the system.</p>
+        </div>
+      </div>
+      {% endblock %}
+    </div>
 
-    {% include 'myapp/footer.html' %}
+    <footer class="footer">
+      <div class="container text-center">
+        <p>&copy; Powered by SyNchRoniK 2025</p>
+      </div>
+    </footer>
+
+    <script>
+      const sidebar = document.querySelector(".sidebar");
+      const header = document.querySelector(".header");
+      const content = document.querySelector(".content");
+      const profileIcon = document.getElementById("profile-photo");
+      const profileDropdown = document.getElementById("profile-dropdown");
+      const userName = document.getElementById("user-name");
+
+      profileIcon.addEventListener("click", () => {
+        if (
+          profileDropdown.style.display === "none" ||
+          !profileDropdown.style.display
+        ) {
+          profileDropdown.style.display = "flex";
+        } else {
+          profileDropdown.style.display = "none";
+        }
+      });
+
+      document.addEventListener("click", (event) => {
+        if (
+          !event.target.closest(".profile-icon") &&
+          !event.target.closest(".profile-dropdown")
+        ) {
+          profileDropdown.style.display = "none";
+        }
+      });
+
+      function loadPage(page) {
+        const mainContent = document.getElementById("main-content");
+        switch (page) {
+          case "viewProfile":
+            fetch("{% url 'profile_view' %}")
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+              })
+              .then((data) => {
+                mainContent.innerHTML = data;
+              })
+              .catch((error) => {
+                console.error("Error loading View Profile page:", error);
+                mainContent.innerHTML =
+                  "<p>Error loading View Profile page. Please try again later.</p>";
+              });
+            break;
+          case "changePassword":
+            fetch("{% url 'change_password' %}")
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+              })
+              .then((data) => {
+                mainContent.innerHTML = data;
+              })
+              .catch((error) => {
+                console.error("Error loading Change Password page:", error);
+                mainContent.innerHTML =
+                  "<p>Error loading Change Password page. Please try again later.</p>";
+              });
+            break;
+          case "help":
+            mainContent.innerHTML =
+              "<h2>Help</h2><p>Help content goes here...</p>";
+            break;
+          case "logout":
+            mainContent.innerHTML =
+              "<h2>Logout</h2><p>You have been logged out.</p>";
+            break;
+          case "adminRegisterStudent":
+            {% if user.is_staff %}
+            fetch("{% url 'admin_register_student' %}")
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+              })
+              .then((data) => {
+                mainContent.innerHTML = data;
+                initializeDatePickers();
+                initializeDropdowns();
+                handleFormSubmission('register-student-form', 'Student registration successful!');
+              })
+              .catch((error) => {
+                console.error("Error loading Admin Register Student page:", error);
+                mainContent.innerHTML =
+                  "<p>Error loading Admin Register Student page. Please try again later.</p>";
+              });
+            {% else %}
+            mainContent.innerHTML =
+              "<h2>Access Denied</h2><p>You do not have permission to access this page.</p>";
+            {% endif %}
+            break;
+          case "adminRegisterEmployee":
+            {% if user.is_staff %}
+            fetch("{% url 'admin_register_employee' %}")
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+              })
+              .then((data) => {
+                mainContent.innerHTML = data;
+                initializeDatePickers();
+                initializeDropdowns();
+                handleFormSubmission('register-employee-form', 'Employee registration successful!');
+              })
+              .catch((error) => {
+                console.error("Error loading Admin Register Employee page:", error);
+                mainContent.innerHTML =
+                  "<p>Error loading Admin Register Employee page. Please try again later.</p>";
+              });
+            {% else %}
+            mainContent.innerHTML =
+              "<h2>Access Denied</h2><p>You do not have permission to access this page.</p>";
+            {% endif %}
+            break;
+          default:
+            mainContent.innerHTML =
+              "<h2>Welcome to the College Software</h2><p>Select an option from the sidebar to navigate through the system.</p>";
+        }
+        profileDropdown.style.display = "none";
+      }
+
+      function handleFormSubmission(formId, successMessage) {
+        document.querySelector(`#${formId}`).addEventListener('submit', function(event) {
+          event.preventDefault();
+          var form = event.target;
+          var formData = new FormData(form);
+          var submitButton = document.getElementById('submit-button');
+          var loadingSpinner = document.getElementById('loading-spinner');
+          submitButton.disabled = true;
+          loadingSpinner.style.display = 'inline-block';
+          fetch(form.action, {
+            method: form.method,
+            body: formData,
+            headers: {
+              'X-Requested-With': 'XMLHttpRequest'
+            }
+          }).then(response => {
+            submitButton.disabled = false;
+            loadingSpinner.style.display = 'none';
+            if (response.ok) {
+              const successMessageElement = document.createElement('div');
+              successMessageElement.id = 'success-message';
+              successMessageElement.style.color = 'green';
+              successMessageElement.style.textAlign = 'center';
+              successMessageElement.style.marginTop = '20px';
+              successMessageElement.textContent = successMessage;
+              form.parentNode.insertBefore(successMessageElement, form);
+              form.reset();
+              setTimeout(() => {
+                successMessageElement.style.display = 'none';
+              }, 2000); // Adjust the timeout duration as needed
+            } else if (response.status === 409) {
+              alert('This entry already exists. Please check the details and try again.');
+            } else {
+              alert('There was an error with the registration. Please try again.');
+            }
+          }).catch(error => {
+            submitButton.disabled = false;
+            loadingSpinner.style.display = 'none';
+            console.error('Error:', error);
+            alert('There was an error with the registration. Please try again.');
+          });
+        });
+      }
+
+      function loadUserManagementPage() {
+        const mainContent = document.getElementById("main-content");
+        fetch("{% url 'admin_register' %}")
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.text();
+          })
+          .then((data) => {
+            mainContent.innerHTML = data;
+          })
+          .catch((error) => {
+            console.error("Error loading User Management page:", error);
+            mainContent.innerHTML =
+              "<p>Error loading User Management page. Please try again later.</p>";
+          });
+      }
+
+      function loadHomePage() {
+        window.location.href = "{% url 'home' %}";
+      }
+
+      function refreshCurrentPage() {
+        location.reload();
+      }
+
+      const loggedInUserName = "{{ user.username }}";
+      userName.textContent = loggedInUserName;
+
+      function updateInstitutes() {
+        var universityId = document.getElementById("id_university").value;
+        if (!universityId) {
+          return;
+        }
+        var instituteField = document.getElementById("id_institute");
+        var xhr = new XMLHttpRequest();
+        xhr.open(
+          "GET",
+          '{% url "load_institutes" %}?university_id=' + universityId,
+          true
+        );
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            instituteField.innerHTML =
+              '<option value="">Select Institute</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement("option");
+              opt.value = option.id;
+              opt.textContent = option.name;
+              instituteField.appendChild(opt);
+            });
+            updatePrograms(); // Update programs after institutes are loaded
+          }
+        };
+        xhr.send();
+      }
+
+      function updatePrograms() {
+        var instituteId = document.getElementById("id_institute").value;
+        if (!instituteId) {
+          return;
+        }
+        var programField = document.getElementById("id_program");
+        var xhr = new XMLHttpRequest();
+        xhr.open(
+          "GET",
+          '{% url "load_programs" %}?institute_id=' + instituteId,
+          true
+        );
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            programField.innerHTML = '<option value="">Select Program</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement("option");
+              opt.value = option.id;
+              opt.textContent = option.name;
+              programField.appendChild(opt);
+            });
+            updateBranches(); // Update branches after programs are loaded
+          }
+        };
+        xhr.send();
+      }
+
+      function updateBranches() {
+        var programId = document.getElementById("id_program").value;
+        if (!programId) {
+          return;
+        }
+        var branchField = document.getElementById("id_branch");
+        var xhr = new XMLHttpRequest();
+        xhr.open(
+          "GET",
+          '{% url "load_branches" %}?program_id=' + programId,
+          true
+        );
+        xhr.onload = function () {
+          if (xhr.status === 200) {
+            var options = JSON.parse(xhr.responseText);
+            branchField.innerHTML = '<option value="">Select Branch</option>';
+            options.forEach(function (option) {
+              var opt = document.createElement("option");
+              opt.value = option.id;
+              opt.textContent = option.name;
+              branchField.appendChild(opt);
+            });
+          }
+        };
+        xhr.send();
+      }
+
+      function initializeDatePickers() {
+        $("#dateOfBirthPicker").datepicker({
+          format: "yyyy-mm-dd",
+          autoclose: true,
+          todayHighlight: true,
+        });
+        $("#admissionDatePicker").datepicker({
+          format: "yyyy-mm-dd",
+          autoclose: true,
+          todayHighlight: true,
+        });
+
+        // Trigger datepicker on calendar icon click
+        $("#dateOfBirthPicker .input-group-text").click(function () {
+          $("#dateOfBirthPicker input").focus();
+        });
+        $("#admissionDatePicker .input-group-text").click(function () {
+          $("#admissionDatePicker input").focus();
+        });
+      }
+
+      function initializeDropdowns() {
+        const universityElement = document.getElementById("id_university");
+        const instituteElement = document.getElementById("id_institute");
+        const programElement = document.getElementById("id_program");
+
+        if (universityElement) {
+          universityElement.addEventListener("change", updateInstitutes);
+        }
+        if (instituteElement) {
+          instituteElement.addEventListener("change", updatePrograms);
+        }
+        if (programElement) {
+          programElement.addEventListener("change", updateBranches);
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeDropdowns();
+      });
+
+      function toggleRegisterOptions() {
+        const registerOptions = document.getElementById('register-options');
+        if (registerOptions.style.display === 'none' || !registerOptions.style.display) {
+            registerOptions.style.display = 'block';
+        } else {
+            registerOptions.style.display = 'none';
+        }
+      }
+
+      document.querySelector('#register-employee-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var form = event.target;
+        var formData = new FormData(form);
+        fetch(form.action, {
+          method: form.method,
+          body: formData,
+          headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+          }
+        }).then(response => {
+          if (response.ok) {
+            document.getElementById('success-message').style.display = 'block';
+            form.reset();
+            setTimeout(() => {
+              location.reload(); // Reload the page after showing the success message
+            }, 2000); // Adjust the timeout duration as needed
+          } else {
+            alert('There was an error with the registration. Please try again.');
+          }
+        }).catch(error => {
+          console.error('Error:', error);
+          alert('There was an error with the registration. Please try again.');
+        });
+      });
+    </script>
   </body>
 </html>
